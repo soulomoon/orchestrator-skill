@@ -1,85 +1,71 @@
 ---
 name: run-orchestrator-loop
-description: [TODO: Complete and informative explanation of what the skill does and when to use it. Include WHEN to use this skill - specific scenarios, file types, or tasks that trigger it.]
+description: Use when a repository already has an initialized `orchestrator/` directory and needs the delegated orchestrator loop started or resumed through guider, planner, implementer, reviewer, and merger stages.
 ---
 
 # Run Orchestrator Loop
 
 ## Overview
 
-[TODO: 1-2 sentences explaining what this skill enables]
+Act as a pure controller over the persisted repo-local orchestrator contract. Read state, delegate every substantive stage to fresh real subagents, update only machine-control state, and continue until the roadmap is complete.
 
-## Structuring This Skill
+If real subagents are unavailable, stop and tell the user this skill cannot honor its delegation contract in the current environment.
 
-[TODO: Choose the structure that best fits this skill's purpose. Common patterns:
+## Workflow
 
-**1. Workflow-Based** (best for sequential processes)
-- Works well when there are clear step-by-step procedures
-- Example: DOCX skill with "Workflow Decision Tree" -> "Reading" -> "Creating" -> "Editing"
-- Structure: ## Overview -> ## Workflow Decision Tree -> ## Step 1 -> ## Step 2...
+1. Load state and references.
+2. Resume an active round or start a new one with the guider.
+3. Use one branch and one worktree for the active round.
+4. Delegate each stage in order.
+5. Squash-merge approved rounds and continue.
 
-**2. Task-Based** (best for tool collections)
-- Works well when the skill offers different operations/capabilities
-- Example: PDF skill with "Quick Start" -> "Merge PDFs" -> "Split PDFs" -> "Extract Text"
-- Structure: ## Overview -> ## Quick Start -> ## Task Category 1 -> ## Task Category 2...
+## Load Before Acting
 
-**3. Reference/Guidelines** (best for standards or specifications)
-- Works well for brand guidelines, coding standards, or requirements
-- Example: Brand styling with "Brand Guidelines" -> "Colors" -> "Typography" -> "Features"
-- Structure: ## Overview -> ## Guidelines -> ## Specifications -> ## Usage...
+Read these files first:
 
-**4. Capabilities-Based** (best for integrated systems)
-- Works well when the skill provides multiple interrelated features
-- Example: Product Management with "Core Capabilities" -> numbered capability list
-- Structure: ## Overview -> ## Core Capabilities -> ### 1. Feature -> ### 2. Feature...
+- `orchestrator/state.json`
+- `orchestrator/roadmap.md`
+- `orchestrator/verification.md`
+- `orchestrator/roles/`
+- [state-machine.md](references/state-machine.md)
+- [resume-rules.md](references/resume-rules.md)
+- [delegation-boundaries.md](references/delegation-boundaries.md)
+- [worktree-merge-rules.md](references/worktree-merge-rules.md)
 
-Patterns can be mixed and matched as needed. Most skills combine patterns (e.g., start with task-based, add workflow for complex operations).
+## Stage Rules
 
-Delete this entire "Structuring This Skill" section when done - it's just guidance.]
+- `select-task` belongs to the guider.
+- `plan` belongs to the planner.
+- `implement` belongs to the implementer.
+- `review` belongs to the reviewer.
+- `merge` uses merger-authored notes plus controller bookkeeping.
+- `update-roadmap` belongs to the guider.
 
-## [TODO: Replace with the first main section based on chosen structure]
+Do not simulate these roles in your own voice.
 
-[TODO: Add content here. See examples in existing skills:
-- Code samples for technical skills
-- Decision trees for complex workflows
-- Concrete examples with realistic user requests
-- References to scripts/templates/references as needed]
+## Controller Rules
 
-## Resources (optional)
+- Update only machine-control state directly.
+- Keep the same round id, branch, and worktree until the round is accepted.
+- On review rejection, return to `plan` for the same round.
+- Resume the exact incomplete stage after interruption.
+- Merge only after explicit reviewer approval.
 
-Create only the resource directories this skill actually needs. Delete this section if no resources are required.
+## Subagent Rules
 
-### scripts/
-Executable code (Python/Bash/etc.) that can be run directly to perform specific operations.
+- Use a fresh real subagent for each stage.
+- Never interrupt a live subagent.
+- Never set a timeout on a live subagent.
+- Wait for the active subagent to finish before continuing.
+- Do not do the delegated work yourself while a role agent should own it.
 
-**Examples from other skills:**
-- PDF skill: `fill_fillable_fields.py`, `extract_form_field_info.py` - utilities for PDF manipulation
-- DOCX skill: `document.py`, `utilities.py` - Python modules for document processing
+## Completion
 
-**Appropriate for:** Python scripts, shell scripts, or any executable code that performs automation, data processing, or specific operations.
+Continue round by round until every roadmap item is complete or a recorded controller error blocks safe progress. When blocked by corrupt or missing state, record the exact problem in `state.json` instead of guessing.
 
-**Note:** Scripts may be executed without loading into context, but can still be read by Codex for patching or environment adjustments.
+## Resources
 
-### references/
-Documentation and reference material intended to be loaded into context to inform Codex's process and thinking.
-
-**Examples from other skills:**
-- Product management: `communication.md`, `context_building.md` - detailed workflow guides
-- BigQuery: API reference documentation and query examples
-- Finance: Schema documentation, company policies
-
-**Appropriate for:** In-depth documentation, API references, database schemas, comprehensive guides, or any detailed information that Codex should reference while working.
-
-### assets/
-Files not intended to be loaded into context, but rather used within the output Codex produces.
-
-**Examples from other skills:**
-- Brand styling: PowerPoint template files (.pptx), logo files
-- Frontend builder: HTML/React boilerplate project directories
-- Typography: Font files (.ttf, .woff2)
-
-**Appropriate for:** Templates, boilerplate code, document templates, images, icons, fonts, or any files meant to be copied or used in the final output.
-
----
-
-**Not every skill requires all three types of resources.**
+- [state-machine.md](references/state-machine.md): stage order, ownership, and legal transitions
+- [resume-rules.md](references/resume-rules.md): automatic resume behavior
+- [delegation-boundaries.md](references/delegation-boundaries.md): what the controller may and may not do
+- [worktree-merge-rules.md](references/worktree-merge-rules.md): per-round worktree and squash-merge rules
