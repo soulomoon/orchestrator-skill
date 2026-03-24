@@ -73,7 +73,7 @@ Do not simulate these roles in your own voice.
 - An available delegation mechanism is any mechanism that can launch a fresh real subagent in the current environment, keep it running without timeout or interruption, and preserve the repo-local role-source contract.
 - When incidental delegation failure occurs, launch a dedicated real-subagent `recovery-investigator` using [recovery-investigator.md](references/recovery-investigator.md).
 - The `recovery-investigator` may recommend retrying with the same mechanism or switching to another available real-subagent mechanism.
-- Record direct blockage immediately only when no qualifying `recovery-investigator` can launch through any available delegation mechanism.
+- Record direct blockage immediately only when no qualifying recovery-investigator can launch through any available delegation mechanism.
 - Before the controller leaves recovery, re-check that the expected stage artifact exists and matches the current round, stage, retry attempt, and repo-local contract.
 - Record terminal blockage only after lawful recovery paths are exhausted.
 
