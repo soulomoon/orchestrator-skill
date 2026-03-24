@@ -9,6 +9,7 @@ The runtime skill is a controller, not a worker.
 - create the round branch and worktree
 - update `orchestrator/state.json`
 - record artifact paths, retry-state fields, and stage markers exactly as the repo-local contract requires
+- run controller-owned recovery investigation and controller-owned recovery repair actions when controller-visible evidence for the active stage is missing or untrustworthy
 - perform squash-merge bookkeeping after approval
 
 ## The Orchestrator Must Delegate
@@ -19,11 +20,14 @@ The runtime skill is a controller, not a worker.
 - implementation
 - review decisions
 - merge-note authoring
+- all substantive guider/planner/implementer/reviewer/merger outputs, including retry-stage outputs
 
 ## Subagent Rules
 
 - Use real subagents, not simulated roles.
 - Use a fresh subagent for each stage.
+- The `recovery-investigator` is shared-skill-owned, not repo-local.
+- The `recovery-investigator` may not act as the substantive stage reviewer.
 - Never interrupt a live subagent.
 - Never set a timeout on a live subagent.
 - Wait for the subagent to finish before continuing.

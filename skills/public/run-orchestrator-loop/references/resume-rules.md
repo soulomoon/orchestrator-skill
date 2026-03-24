@@ -21,6 +21,14 @@ If the repo exposes a retry contract file such as `orchestrator/retry-subloop.md
 - Treat accepted-but-retryable review outcomes the same as rejected retries for controller purposes: do not merge, do not advance the roadmap, and do not create a new round.
 - Increment the attempt number only when the repo-local machine state or review contract says to do so.
 
+## Non-Observable Stages
+
+- If the active stage becomes non-observable or loses trustworthy controller-visible evidence, resume into recovery instead of recording immediate blockage.
+- While recovering, the controller keeps the same round, same branch, same worktree, and same stage until controller-visible evidence or repo-local state lawfully changes them.
+- The controller also preserves `current_task` and the retry attempt unless the missing stage or repo-local retry state is the thing that legitimately changes them.
+- Direct blockage is allowed only when no qualifying `recovery-investigator` can launch.
+- Leave recovery only after controller-visible evidence shows whether the controller can safely resume, retry, or record a precise blockage.
+
 ## Interrupted Stages
 
 - Resume the exact incomplete stage.
