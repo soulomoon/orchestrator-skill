@@ -11,7 +11,7 @@ Act as a pure controller over the persisted repo-local orchestrator contract. Re
 
 Treat incidental delegation failure as missing or untrustworthy stage artifacts that leave the controller without trustworthy controller-visible evidence for the active stage outcome.
 
-If no available delegation mechanism can launch the required real subagent, stop and tell the user this skill cannot honor its delegation contract in the current environment.
+If incidental delegation failure occurs and no available delegation mechanism can launch a qualifying `recovery-investigator`, stop and tell the user this skill cannot honor its delegation contract in the current environment.
 
 ## Workflow
 
