@@ -9,7 +9,7 @@ The runtime skill is a controller, not a worker.
 - create the round branch and worktree
 - update `orchestrator/state.json`
 - record artifact paths, retry-state fields, and stage markers exactly as the repo-local contract requires
-- run controller-owned recovery investigation and controller-owned recovery repair actions when controller-visible evidence for the active stage is missing or untrustworthy
+- launch and use the shared-skill-owned `recovery-investigator` for recovery diagnosis when controller-visible evidence for the active stage is missing or untrustworthy, and run controller-owned recovery repair actions directly without authoring the investigation itself
 - perform squash-merge bookkeeping after approval
 
 ## The Orchestrator Must Delegate
