@@ -23,10 +23,13 @@ The runtime skill is a controller, not a worker.
 ## Subagent Rules
 
 - Use real subagents, not simulated roles.
+- Prefer repo-local `.codex/agents/orchestrator-<role>.toml` definitions when they exist.
+- If the matching repo-local agent file is missing, fall back to `orchestrator/roles/<role>.md`.
 - Use a fresh subagent for each stage.
 - Never interrupt a live subagent.
 - Never set a timeout on a live subagent.
 - Wait for the subagent to finish before continuing.
+- If a required repo-local role definition is missing from both locations, stop instead of inventing one.
 
 ## If Real Subagents Are Unavailable
 

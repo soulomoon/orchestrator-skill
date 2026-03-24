@@ -5,7 +5,7 @@ This repository contains a pair of Codex skills for running a strict repo-local 
 - `scaffold-orchestrator-loop` initializes an `orchestrator/` control plane in a target repository.
 - `run-orchestrator-loop` resumes and coordinates the delegated round loop without doing the substantive work itself.
 
-The design is intentionally explicit. State lives in the repository, delegated role prompts are inspectable, and each round uses a dedicated branch and worktree so progress can be resumed without relying on chat history.
+The design is intentionally explicit. State lives in the repository, delegated role definitions are inspectable, and each round uses a dedicated branch and worktree so progress can be resumed without relying on chat history.
 
 ## Included Skills
 
@@ -17,7 +17,7 @@ It is responsible for:
 
 - surveying the repository and current goal
 - generating the first roadmap
-- scaffolding `orchestrator/roadmap.md`, `orchestrator/state.json`, `orchestrator/verification.md`, and role prompts
+- scaffolding `orchestrator/roadmap.md`, `orchestrator/state.json`, `orchestrator/verification.md`, and repo-local role agents under `.codex/agents/`
 - preparing the repository for per-round worktrees
 - creating the initial checkpoint commit
 
@@ -29,7 +29,7 @@ It is responsible for:
 
 - loading persisted orchestration state
 - resuming the current round or starting the next one
-- delegating `select-task`, `plan`, `implement`, `review`, and `merge` stages to fresh subagents
+- delegating `select-task`, `plan`, `implement`, `review`, and `merge` stages to fresh subagents, preferring matching repo-local `.codex/agents/orchestrator-*.toml` role definitions and falling back to `orchestrator/roles/` when a role has not migrated yet
 - updating only controller-owned state
 - squash-merging approved rounds and advancing the roadmap
 
@@ -54,27 +54,30 @@ The stage order is:
 
 ## Repo-Local Contract
 
-The scaffolded repository gets a visible top-level `orchestrator/` directory with these core files:
+The scaffolded repository gets a visible top-level `orchestrator/` directory plus repo-local role agents in `.codex/agents/`:
 
 ```text
+.codex/
+└── agents/
+    ├── orchestrator-guider.toml
+    ├── orchestrator-planner.toml
+    ├── orchestrator-implementer.toml
+    ├── orchestrator-reviewer.toml
+    └── orchestrator-merger.toml
+
 orchestrator/
 ├── roadmap.md
 ├── state.json
 ├── verification.md
-├── roles/
-│   ├── guider.md
-│   ├── planner.md
-│   ├── implementer.md
-│   ├── reviewer.md
-│   └── merger.md
 └── rounds/
 ```
 
 Key ideas behind that contract:
 
 - `state.json` stays machine-oriented and tracks the active round, stage, branch, worktree, and resume errors.
-- Human-facing reasoning stays in `roadmap.md`, role prompts, and round artifacts.
+- Human-facing reasoning stays in `roadmap.md`, repo-local role agents, and round artifacts.
 - Each round folder stores delegated artifacts such as `selection.md`, `plan.md`, `implementation-notes.md`, `review.md`, and `merge.md`.
+- The runtime skill prefers `.codex/agents/orchestrator-*.toml` per role and uses `orchestrator/roles/*.md` only when the matching repo-local agent file is missing.
 
 ## Repository Layout
 
@@ -85,6 +88,7 @@ skills/public/
 ├── scaffold-orchestrator-loop/
 │   ├── SKILL.md
 │   ├── agents/openai.yaml
+│   ├── assets/.codex/agents/
 │   ├── assets/orchestrator/
 │   └── references/
 └── run-orchestrator-loop/
@@ -95,7 +99,7 @@ skills/public/
 
 - `SKILL.md` is the entrypoint instruction file.
 - `references/` contains supporting rules for roadmap generation, state transitions, resume behavior, and merge boundaries.
-- `assets/` contains the starter `orchestrator/` contract used by the scaffold skill.
+- `assets/` contains the starter `orchestrator/` state plus repo-local orchestrator role agents used by the scaffold skill.
 
 ## Installation
 

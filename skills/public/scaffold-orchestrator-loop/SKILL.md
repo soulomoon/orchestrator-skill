@@ -1,13 +1,13 @@
 ---
 name: scaffold-orchestrator-loop
-description: Use when a repository needs a new repo-local orchestrator workflow scaffolded from a goal, including an initial roadmap, `orchestrator/` control files, a verification contract, and inspectable role prompts before delegated runtime execution begins.
+description: Use when a repository needs a new repo-local orchestrator workflow scaffolded from a goal, including an initial roadmap, `orchestrator/` control files, a verification contract, and repo-local `.codex/agents` role definitions before delegated runtime execution begins.
 ---
 
 # Scaffold Orchestrator Loop
 
 ## Overview
 
-Create the repository-local control plane for the orchestrator workflow. Review the goal and repository first, scaffold a tailored `orchestrator/` directory, prepare the repo for per-round worktrees, and stop after the initial checkpoint commit.
+Create the repository-local control plane for the orchestrator workflow. Review the goal and repository first, scaffold a tailored `orchestrator/` directory plus repo-local `.codex/agents/` role files, prepare the repo for per-round worktrees, and stop after the initial checkpoint commit.
 
 ## Workflow
 
@@ -38,8 +38,10 @@ Read [repo-contract.md](references/repo-contract.md) and [verification-contract.
 Then:
 
 - copy [assets/orchestrator](assets/orchestrator) into the target repo root as `orchestrator/`
+- copy [assets/.codex/agents](assets/.codex/agents) into the target repo root as `.codex/agents/`
 - replace template placeholders with repo-specific content
-- tune the role prompts if the goal or repo needs stronger guidance
+- tune the repo-local role agents if the goal or repo needs stronger guidance
+- ensure `.codex/agents/` is tracked in git; if the repo ignores `.codex/`, add an exception for the scaffolded role agents
 - ensure `.worktrees/` is ignored so future rounds can use dedicated worktrees
 
 Keep `state.json` machine-oriented. Put reasoning and reviewable content in the human-facing files under `orchestrator/`.
@@ -48,7 +50,7 @@ Keep `state.json` machine-oriented. Put reasoning and reviewable content in the 
 
 After the scaffolded files are tailored:
 
-- stage the new orchestrator files
+- stage the new orchestrator files and the scaffolded `.codex/agents/` role agents
 - create the initial checkpoint commit
 - stop after setup
 
@@ -59,4 +61,5 @@ Do not start implementation rounds. Runtime orchestration belongs to `$run-orche
 - [repo-contract.md](references/repo-contract.md): required file layout, state schema, and ownership rules
 - [roadmap-generation.md](references/roadmap-generation.md): how to derive the initial roadmap from the goal and repo
 - [verification-contract.md](references/verification-contract.md): how to tailor `orchestrator/verification.md`
-- [assets/orchestrator](assets/orchestrator): templates for the scaffolded repo contract
+- [assets/orchestrator](assets/orchestrator): templates for the scaffolded controller state
+- [assets/.codex/agents](assets/.codex/agents): templates for the scaffolded repo-local role agents

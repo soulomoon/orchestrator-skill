@@ -1,17 +1,17 @@
 # Repo Contract
 
-Scaffold a visible top-level `orchestrator/` directory in the target repository.
+Scaffold a visible top-level `orchestrator/` directory plus repo-local `.codex/agents/` role definitions in the target repository.
 
 ## Required Files
 
 - `orchestrator/roadmap.md`
 - `orchestrator/state.json`
 - `orchestrator/verification.md`
-- `orchestrator/roles/guider.md`
-- `orchestrator/roles/planner.md`
-- `orchestrator/roles/implementer.md`
-- `orchestrator/roles/reviewer.md`
-- `orchestrator/roles/merger.md`
+- `.codex/agents/orchestrator-guider.toml`
+- `.codex/agents/orchestrator-planner.toml`
+- `.codex/agents/orchestrator-implementer.toml`
+- `.codex/agents/orchestrator-reviewer.toml`
+- `.codex/agents/orchestrator-merger.toml`
 - `orchestrator/rounds/`
 
 ## `state.json` Schema
@@ -34,8 +34,14 @@ Use a small machine-oriented state file.
 ## File Ownership
 
 - The orchestrator may update `orchestrator/state.json` and round bookkeeping only.
-- Delegated roles author roadmap content, round artifacts, review records, and merge notes.
+- Delegated role agents author roadmap content, round artifacts, review records, and merge notes.
 - The guider owns task selection and roadmap updates.
+
+## Compatibility and Migration
+
+- New repos should scaffold the namespaced `.codex/agents/orchestrator-<role>.toml` files as the default contract.
+- Runtime remains compatible with legacy `orchestrator/roles/<role>.md` files on a per-role basis.
+- During migration, keep each legacy role file until the matching `.codex/agents/orchestrator-<role>.toml` file exists.
 
 ## Round Artifacts
 
@@ -54,5 +60,6 @@ Add more files only when a round needs them.
 Prepare the repository for round worktrees during setup:
 
 - Ensure `.worktrees/` is gitignored.
+- Ensure the scaffolded `.codex/agents/` files stay tracked; if `.codex/` is ignored, carve out an exception for the orchestrator role agents.
 - Do not place machine state inside `.worktrees/`.
 - Keep `orchestrator/` in the main checkout so resume state stays visible.
