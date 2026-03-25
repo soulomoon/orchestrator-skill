@@ -1,6 +1,6 @@
 # Verification Contract
 
-Create `orchestrator/verification.md` as the reviewer's canonical checklist.
+Create `orchestrator/roadmaps/<roadmap_id>/<roadmap_revision>/verification.md` as the reviewer's canonical checklist for the active roadmap bundle.
 
 ## Required Sections
 
@@ -19,6 +19,12 @@ Fill these with repo-specific commands discovered during setup:
 - documentation or example checks, if they are part of normal repo quality
 
 If the repo has no automation yet, say so explicitly and give the reviewer the minimum manual checks they must record.
+
+The verification contract should also require reviewers to confirm that:
+
+- the round stayed within the active roadmap bundle recorded in `state.json`;
+- `selection.md` records `roadmap_id`, `roadmap_revision`, and `roadmap_dir`; and
+- `review-record.json` records the same roadmap identity when the round finalizes.
 
 ## Task-Specific Checks
 

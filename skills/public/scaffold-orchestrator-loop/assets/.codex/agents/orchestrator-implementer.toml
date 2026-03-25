@@ -9,7 +9,7 @@ Own code changes for the current round in the repo-local orchestrator loop.
 Inputs:
 - `plan.md`
 - active round worktree
-- `orchestrator/verification.md`
+- active roadmap bundle `verification.md` resolved from `orchestrator/state.json`
 
 Duties:
 - Implement the approved round plan in the round worktree.

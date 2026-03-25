@@ -4,9 +4,10 @@ Scaffold a visible top-level `orchestrator/` directory plus repo-local `.codex/a
 
 ## Required Files
 
-- `orchestrator/roadmap.md`
 - `orchestrator/state.json`
-- `orchestrator/verification.md`
+- `orchestrator/roadmaps/<roadmap_id>/<roadmap_revision>/roadmap.md`
+- `orchestrator/roadmaps/<roadmap_id>/<roadmap_revision>/retry-subloop.md`
+- `orchestrator/roadmaps/<roadmap_id>/<roadmap_revision>/verification.md`
 - `.codex/agents/orchestrator-guider.toml`
 - `.codex/agents/orchestrator-planner.toml`
 - `.codex/agents/orchestrator-implementer.toml`
@@ -21,6 +22,9 @@ Use a small machine-oriented state file.
 | Key | Type | Meaning |
 | --- | --- | --- |
 | `base_branch` | string | Branch that accepted rounds merge into |
+| `roadmap_id` | string | Stable identifier for the active roadmap family |
+| `roadmap_revision` | string | Active roadmap revision such as `rev-001` |
+| `roadmap_dir` | string | Active roadmap bundle directory under `orchestrator/roadmaps/` |
 | `active_round_id` | string or null | Current round identifier |
 | `stage` | string | `done`, `select-task`, `plan`, `implement`, `review`, `merge`, or `update-roadmap` |
 | `current_task` | string or null | Selected roadmap item summary |
@@ -34,8 +38,9 @@ Use a small machine-oriented state file.
 ## File Ownership
 
 - The orchestrator may update `orchestrator/state.json` and round bookkeeping only.
-- Delegated role agents author roadmap content, round artifacts, review records, and merge notes.
+- Delegated role agents author roadmap bundle content, round artifacts, review records, and merge notes.
 - The guider owns task selection and roadmap updates.
+- Once any round has used a roadmap revision, keep that revision immutable. Publish a new revision directory instead of rewriting a used revision.
 
 ## Compatibility and Migration
 
@@ -51,9 +56,12 @@ Each round folder should contain delegated artifacts only. Start with these name
 - `plan.md`
 - `implementation-notes.md`
 - `review.md`
+- `review-record.json`
 - `merge.md`
 
 Add more files only when a round needs them.
+
+Every round must record the active `roadmap_id`, `roadmap_revision`, and `roadmap_dir` in `selection.md` and `review-record.json` so archived packets remain self-contained.
 
 ## Worktree Preparation
 
@@ -62,4 +70,4 @@ Prepare the repository for round worktrees during setup:
 - Ensure `.worktrees/` is gitignored.
 - Ensure the scaffolded `.codex/agents/` files stay tracked; if `.codex/` is ignored, carve out an exception for the orchestrator role agents.
 - Do not place machine state inside `.worktrees/`.
-- Keep `orchestrator/` in the main checkout so resume state stays visible.
+- Keep `orchestrator/` in the main checkout so resume state and roadmap bundles stay visible.

@@ -5,9 +5,9 @@ The runtime skill is a controller, not a worker.
 ## The Orchestrator May Do Directly
 
 - read repo and orchestrator state
-- read repo-local retry contract docs when present
+- read the active roadmap bundle and repo-local retry contract docs resolved from `state.json.roadmap_dir`
 - create the round branch and worktree
-- update `orchestrator/state.json`
+- update `orchestrator/state.json`, including active roadmap metadata when a reviewed `update-roadmap` stage lawfully activates a new revision
 - record artifact paths, retry-state fields, and stage markers exactly as the repo-local contract requires
 - launch and use the shared-skill-owned `recovery-investigator` for recovery diagnosis when controller-visible evidence for the active stage is missing or untrustworthy, and run controller-owned recovery repair actions directly without authoring the investigation itself
 - record the precise blockage in `orchestrator/state.json` only when no qualifying `recovery-investigator` can launch through any available delegation mechanism
@@ -16,7 +16,7 @@ The runtime skill is a controller, not a worker.
 ## The Orchestrator Must Delegate
 
 - task selection
-- roadmap edits
+- roadmap bundle edits
 - round planning
 - implementation
 - review decisions

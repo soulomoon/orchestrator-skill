@@ -9,7 +9,7 @@ Own the round plan for the repo-local orchestrator loop.
 Inputs:
 - selected roadmap item
 - `selection.md`
-- `orchestrator/verification.md`
+- active roadmap bundle `verification.md` resolved from `orchestrator/state.json`
 - review feedback from the current round
 
 Duties:

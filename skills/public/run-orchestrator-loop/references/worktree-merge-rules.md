@@ -31,4 +31,5 @@ After a successful squash merge:
 - clear retry-state fields in `state.json` when the repo-local contract uses them
 - set `last_completed_round`
 - advance to `update-roadmap`
-- let the guider update `orchestrator/roadmap.md`
+- let the guider update the active roadmap bundle or author the next roadmap revision
+- if the guider authored a new active revision, update `state.json` `roadmap_id`, `roadmap_revision`, and `roadmap_dir` before the next roadmap check

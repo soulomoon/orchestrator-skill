@@ -1,5 +1,8 @@
 {
   "base_branch": "main",
+  "roadmap_id": "TEMPLATE_ROADMAP_ID",
+  "roadmap_revision": "rev-001",
+  "roadmap_dir": "orchestrator/roadmaps/TEMPLATE_ROADMAP_ID/rev-001",
   "active_round_id": null,
   "stage": "done",
   "current_task": null,
