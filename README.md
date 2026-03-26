@@ -1,11 +1,16 @@
 # Orchestrator Skill Set
 
-This repository contains a pair of agent-neutral skills for running a strict repo-local orchestration workflow:
+This repository contains a pair of agent-neutral skills for running a strict
+repo-local orchestration workflow:
 
 - `scaffold-orchestrator-loop` initializes an `orchestrator/` control plane in a target repository.
 - `run-orchestrator-loop` resumes and coordinates the delegated round loop without doing the substantive work itself.
 
-The design is intentionally explicit. State lives in the repository, delegated role definitions are inspectable, and each round uses a dedicated branch and worktree so progress can be resumed without relying on chat history.
+The design is intentionally explicit. State lives in the repository, delegated
+role definitions are inspectable, and each round uses a dedicated branch and
+worktree so progress can be resumed without relying on chat history. Serial
+execution remains the default, but the repo-local contract can now opt into
+parallel rounds and planner-defined worker fan-out explicitly.
 
 ## Included Skills
 
@@ -28,29 +33,39 @@ Use this skill after setup, when the repository already has an initialized `orch
 It is responsible for:
 
 - loading persisted orchestration state
-- resuming the current round or starting the next one
+- normalizing older serial state into safe defaults when needed
+- resuming current live rounds or starting new ones up to the configured cap
 - delegating `select-task`, `plan`, `implement`, `review`, and `merge` stages to fresh subagents that load their runtime instructions from `orchestrator/roles/`
 - updating only controller-owned state
-- squash-merging approved rounds and advancing the roadmap
+- squash-merging approved rounds, handling `pending-merge`, and advancing the roadmap
 
 ## Workflow Model
 
 The runtime loop is strict about ownership:
 
 - The orchestrator is a controller, not an implementer.
-- Each round is linear and uses one branch plus one worktree.
-- Review rejection sends the round back to `plan`, then `implement`, then `review` again.
+- Serial execution is the default unless roadmap metadata explicitly marks items as parallel-safe.
+- Each live round uses one canonical branch plus one canonical worktree.
+- Different rounds may be active at the same time when the roadmap and controller state authorize it.
+- Review rejection or drift can send a round back to `plan`, `implement`, or `review` again.
+- Worker fan-out is allowed only when the planner authors machine-readable `worker-plan.json` for a round.
 - Resume behavior comes from files in the repository, not hidden session context.
 
-The stage order is:
+Per-round stage order is:
 
 1. `select-task`
 2. `plan`
 3. `implement`
 4. `review`
-5. `merge`
-6. `update-roadmap`
+5. `pending-merge`
+6. `merge`
 7. `done`
+
+Controller-global stage order is:
+
+1. `dispatch-rounds`
+2. `update-roadmap`
+3. `done`
 
 ## Repo-Local Contract
 
@@ -78,9 +93,11 @@ orchestrator/
 
 Key ideas behind that contract:
 
-- `state.json` stays machine-oriented and tracks the active round, stage, branch, worktree, and resume errors.
+- `state.json` stays machine-oriented and tracks controller state, `active_rounds`, `pending_merge_rounds`, legacy mirrors for serial compatibility, and resume errors.
 - Human-facing reasoning stays in the active roadmap bundle `orchestrator/roadmaps/<roadmap_id>/<roadmap_revision>/roadmap.md`, repo-local role definitions, and round artifacts.
+- Roadmap items carry explicit `Item id:`, `Parallel safe:`, `Parallel group:`, and `Merge after:` metadata.
 - Each round folder stores delegated artifacts such as `selection.md`, `plan.md`, `implementation-notes.md`, `review.md`, and `merge.md`.
+- Worker fan-out adds controller-readable `worker-plan.json` plus worker handoff artifacts, but approval and merge stay canonical at the round level.
 - The runtime skill loads role instructions from `orchestrator/roles/*.md`.
 
 ## Repository Layout
@@ -194,11 +211,13 @@ If either path already exists in `~/.codex/skills`, move or remove the existing 
 3. Review the generated `orchestrator/` contract and initial checkpoint commit.
 4. Invoke `run-orchestrator-loop` to start or resume the delegated round loop.
 5. Let the runtime skill continue until roadmap items are complete or a recorded controller error blocks progress.
+6. If the roadmap explicitly marks independent items as parallel-safe, expect multiple round branches and worktrees to run concurrently.
 
 ## Development Notes
 
 - Round branches are expected to use the `orchestrator/round-*` prefix.
 - Round worktrees live under `orchestrator/worktrees/` in the target repository.
+- Worker fan-out uses planner-authored `worker-plan.json` and worker worktrees beneath `orchestrator/worktrees/`.
 - Reviewer approval is required before merge.
 - Merge strategy is squash merge into the recorded base branch.
 
@@ -207,4 +226,6 @@ If either path already exists in `~/.codex/skills`, move or remove the existing 
 The design and implementation plan used to build this repo are checked in under:
 
 - [docs/superpowers/specs/2026-03-26-platform-neutral-orchestrator-design.md](docs/superpowers/specs/2026-03-26-platform-neutral-orchestrator-design.md)
+- [docs/superpowers/specs/2026-03-27-parallel-orchestrator-design.md](docs/superpowers/specs/2026-03-27-parallel-orchestrator-design.md)
 - [docs/superpowers/plans/2026-03-26-platform-neutral-orchestrator.md](docs/superpowers/plans/2026-03-26-platform-neutral-orchestrator.md)
+- [docs/superpowers/plans/2026-03-27-parallel-orchestrator.md](docs/superpowers/plans/2026-03-27-parallel-orchestrator.md)
