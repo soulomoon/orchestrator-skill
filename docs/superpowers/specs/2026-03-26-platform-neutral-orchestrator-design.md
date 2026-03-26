@@ -175,10 +175,6 @@ runtime behavior beyond the shared platform-neutral contract. Verification
 should confirm that the install commands and skill discovery paths remain
 correct; it does not need to certify every downstream host-agent UX detail.
 
-If the upstream `skills` CLI does not currently support one of the requested
-agent identifiers, the README should explicitly note that gap rather than
-inventing an unsupported install command.
-
 Symlink-based local development instructions may remain as a secondary section
 for contributors.
 
