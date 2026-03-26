@@ -1,8 +1,8 @@
 # Worktree and Merge Rules
 
-## Branches
+## Round Branches
 
-- Use one branch per round.
+- Use one canonical branch per round.
 - Use the exact pattern `orchestrator/round-<nn>-<slug>`.
 - Include the round number and a short task slug in every round branch.
 
@@ -10,26 +10,48 @@ Example:
 
 - `orchestrator/round-03-add-readme`
 
-## Worktrees
+## Round Worktrees
 
-- Use one dedicated worktree per round.
+- Use one dedicated canonical worktree per round.
 - Use `orchestrator/worktrees/<round-id>`.
-- Ensure `orchestrator/worktrees/` is ignored by a tracked ignore rule before creating the worktree.
-- Reuse the same worktree for planner, implementer, reviewer, and any same-round retry attempts within the round.
+- Ensure `orchestrator/worktrees/` is ignored by a tracked ignore rule before
+  creating the worktree.
+- Reuse the same canonical worktree for planner, integration implementer,
+  reviewer, merger, and any same-round retry attempts within the round.
+
+## Worker Branches and Worktrees
+
+- Use worker branches only when planner-authored `worker-plan.json` requires
+  worker fan-out.
+- Fork each worker branch from the canonical round branch baseline.
+- Use one worker worktree per worker under
+  `orchestrator/worktrees/<round-id>-<worker-id>`.
+- Keep worker writes inside the assigned worker branch/worktree.
+- Keep the canonical round branch/worktree reserved for integrated round state.
 
 ## Merge Rules
 
-- Merge only after reviewer approval that finalizes the round under the repo-local review contract.
+- Merge only after reviewer approval that finalizes the round under the
+  repo-local review contract.
+- A reviewed round may pause in `pending-merge` until merge ordering and base
+  freshness requirements are satisfied.
 - Use squash merge into the recorded base branch.
 - Keep the round branch until the squash merge succeeds.
+- Do not merge a round ahead of declared `Merge after:` or dependency rules.
 
 ## Round Finalization
 
 After a successful squash merge:
 
-- clear active round fields in `state.json`
-- clear retry-state fields in `state.json` when the repo-local contract uses them
+- remove the merged round from `active_rounds`
+- remove the merged round id from `pending_merge_rounds`
+- clear legacy single-round mirror fields when no single active round remains
+- clear retry-state fields in `state.json` when the repo-local contract uses
+  them
 - set `last_completed_round`
-- advance to `update-roadmap`
-- let the guider update the active roadmap bundle or author the next roadmap revision
-- if the guider authored a new active revision, update `state.json` `roadmap_id`, `roadmap_revision`, and `roadmap_dir` before the next roadmap check
+- advance controller state to `update-roadmap`
+- let the guider update the active roadmap bundle or author the next roadmap
+  revision
+- if the guider authored a new active revision, update `state.json`
+  `roadmap_id`, `roadmap_revision`, and `roadmap_dir` before the next roadmap
+  check

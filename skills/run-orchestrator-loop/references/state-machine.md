@@ -1,18 +1,25 @@
 # State Machine
 
-Use one strict linear round at a time.
+The controller may manage multiple live rounds at once, but each round follows
+one strict legal stage order.
 
-The outer stage order stays linear even when a repo-local retry subloop is active inside one stage.
+## Controller Stages
 
-## Stages
+1. `dispatch-rounds`
+2. `update-roadmap`
+3. `done`
+4. `blocked`
+
+## Round Stages
 
 1. `select-task`
 2. `plan`
 3. `implement`
 4. `review`
-5. `merge`
-6. `update-roadmap`
+5. `pending-merge`
+6. `merge`
 7. `done`
+8. `blocked`
 
 ## Ownership
 
@@ -23,19 +30,37 @@ The outer stage order stays linear even when a repo-local retry subloop is activ
 - `merge`: merger prepares notes, orchestrator performs bookkeeping
 - `update-roadmap`: guider
 
-## Legal Transitions
+## Controller Legal Transitions
 
-- `done` -> `select-task`
+- `done` -> `dispatch-rounds` when unfinished roadmap items remain
+- `dispatch-rounds` -> `update-roadmap` after any successful round merge
+- `update-roadmap` -> `dispatch-rounds` when unfinished items or live rounds
+  remain
+- `update-roadmap` -> `done` only when the active roadmap bundle has no
+  unfinished items and there are no live rounds
+
+## Round Legal Transitions
+
 - `select-task` -> `plan`
 - `plan` -> `implement`
 - `implement` -> `review`
-- `review` -> `plan` when the repo-local review contract requests retry
+- `review` -> `plan` when the repo-local review contract requests full-round
+  retry
+- `review` -> `pending-merge` when approval is granted but merge readiness is
+  blocked by base freshness or declared merge ordering
 - `review` -> `merge` when the repo-local review contract approves finalization
-- `merge` -> `update-roadmap`
-- `update-roadmap` -> `select-task` when the active roadmap bundle still has unfinished `[pending]` or `[in-progress]` items
-- `update-roadmap` -> `done` only when the active roadmap bundle has no unfinished items
+  and `merge_ready` is true
+- `pending-merge` -> `implement` when base refresh or dependency drift requires
+  substantive code refresh before merge
+- `pending-merge` -> `review` when re-review is required after refresh or drift
+- `pending-merge` -> `plan` when the repo-local retry contract requires a new
+  plan
+- `pending-merge` -> `merge` when blockers clear and the round remains
+  review-valid
+- `merge` -> `done`
 
-If `update-roadmap` activates a new roadmap revision, the controller must update
-`state.json` roadmap metadata before evaluating those transitions.
+If `update-roadmap` activates a new roadmap revision, the controller must
+update `state.json` roadmap metadata before evaluating those transitions.
 
-Do not skip forward and do not invent parallel stages.
+Do not skip forward and do not invent parallelism that the roadmap or planner
+artifacts do not authorize.
