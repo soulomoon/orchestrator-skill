@@ -14,6 +14,7 @@ Diagnose delegated-stage failures and recommend recovery steps when a stage beco
 
 ## Duties
 - Investigate delegated-stage failures as the default first recovery action when a qualifying recovery investigator can be launched.
+- Treat `recovery-investigator` as the default first recovery action for delegated-stage failures; the controller may skip the launch only when it records a deterministic reason why no available delegation mechanism can launch a qualifying recovery investigator at all.
 - Produce a diagnosis and recommend a recovery action.
 - Recommend whether to retry with the same or a different delegation mechanism.
 - Recommend whether the controller can safely continue.
