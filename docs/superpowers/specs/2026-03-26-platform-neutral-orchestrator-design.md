@@ -45,6 +45,7 @@ orchestrator/
 │   ├── reviewer.md
 │   └── merger.md
 ├── rounds/
+├── worktrees/
 └── roadmaps/
     └── <roadmap_id>/
         └── <roadmap_revision>/
@@ -57,6 +58,9 @@ The runtime skill must load role instructions only from `orchestrator/roles/`.
 If a required role file is missing, the controller should stop with an exact
 controller error instead of inventing role behavior.
 
+Per-round worktrees must live under `orchestrator/worktrees/` rather than
+`.worktrees/`.
+
 ## Skill Changes
 
 ### `scaffold-orchestrator-loop`
@@ -68,7 +72,8 @@ The scaffold skill will:
 - stop mentioning `.codex/agents/` in descriptions, workflow steps, and
   resource references
 - stop making git-ignore exceptions for `.codex/`
-- continue ensuring `.worktrees/` is ignored
+- ensure `orchestrator/worktrees/` is ignored if the repository tracks
+  generated worktree directories in git
 
 Asset changes:
 
@@ -101,6 +106,11 @@ Recommended prefix:
 This keeps branch names clearly associated with the orchestrator workflow while
 removing Codex-specific branding.
 
+Existing `codex/round-*` branches and already-scaffolded repositories using the
+old contract are intentionally unsupported after this rewrite. The skill set
+will not carry a compatibility or migration layer for the old branch prefix,
+`.codex/agents/`, or `.worktrees/`.
+
 ## README Changes
 
 The README should be rewritten to describe these as agent skills rather than
@@ -110,6 +120,7 @@ Required documentation changes:
 
 - remove Codex-specific identity language
 - describe `orchestrator/roles/` as the canonical runtime contract
+- describe `orchestrator/worktrees/` as the canonical worktree location
 - remove `~/.codex/skills` as the primary installation framing
 - keep the repository layout section aligned with the actual skill folders
 - add installation examples for the mainstream host agents the project wants to
@@ -136,6 +147,11 @@ The commands should use the official `skills` CLI agent flags documented by
 the `vercel-labs/skills` project, not repo-specific symlink instructions as the
 primary onboarding path.
 
+These six agents are documented install targets, not a promise of host-specific
+runtime behavior beyond the shared platform-neutral contract. Verification
+should confirm that the install commands and skill discovery paths remain
+correct; it does not need to certify every downstream host-agent UX detail.
+
 Symlink-based local development instructions may remain as a secondary section
 for contributors.
 
@@ -158,6 +174,7 @@ code-heavy, verification should focus on observable contract integrity:
 - `rg` checks showing `.codex/agents/` has been removed from the runtime
   contract and README
 - `npx skills add . --list` confirming both skills are still discoverable
+- local `skills` CLI checks for the documented agent flags when available
 - one remote `npx skills add <repo-url> --list` check when network conditions
   allow it
 
