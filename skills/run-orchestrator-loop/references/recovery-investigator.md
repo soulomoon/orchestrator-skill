@@ -27,6 +27,9 @@ without a terminal result.
 
 - Serve as the default first recovery action for delegated-stage failures when
   a qualifying recovery investigator can be launched.
+- The controller may skip launching `recovery-investigator` only when it
+  records a deterministic reason that no available delegation mechanism can
+  launch a qualifying recovery investigator.
 - Produce a diagnosis and recommend a recovery action.
 - Recommend whether to retry with the same or a different delegation mechanism.
 - Recommend whether the controller can safely continue.
