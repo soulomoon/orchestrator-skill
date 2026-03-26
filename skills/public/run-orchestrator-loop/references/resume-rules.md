@@ -34,7 +34,16 @@ resume review outcomes.
 - If the active stage becomes non-observable or loses trustworthy controller-visible evidence, resume into recovery instead of recording immediate blockage.
 - While recovering, the controller keeps the same round, same branch, same worktree, and same stage until controller-visible evidence or repo-local state lawfully changes them.
 - The controller also preserves `current_task` and the retry attempt unless the missing stage or repo-local retry state is the thing that legitimately changes them.
-- Direct blockage is allowed only when no qualifying `recovery-investigator` can launch through any available delegation mechanism, and the controller must record the precise blockage in `state.json` before informing the user.
+- For any non-terminal delegated-stage stop, the controller must attempt a
+  qualifying `recovery-investigator` before treating the stop as terminal,
+  unless it can record a deterministic reason why no available delegation
+  mechanism can launch one at all.
+- Direct blockage is allowed only when the attempted
+  `recovery-investigator` does not yield a qualifying recovery path, or when
+  no qualifying `recovery-investigator` can launch through any available
+  delegation mechanism, and the controller must record the precise blockage in
+  `state.json` before informing the user.
+- A missing stage artifact by itself is not enough to justify stopping.
 - Leave recovery only after controller-visible evidence shows whether the controller can safely resume, retry, or record a precise blockage.
 
 ## Interrupted Stages

@@ -2,7 +2,13 @@
 
 The recovery investigator is a shared-skill-owned real subagent used only for
 diagnosis and recovery recommendations when a delegated stage becomes
-non-observable or leaves an untrustworthy artifact.
+non-observable, leaves an untrustworthy artifact, or otherwise creates a
+non-terminal delegated-stage stop condition.
+
+The controller should treat `recovery-investigator` as the default first
+recovery action for delegated-stage failures. A controller may skip the launch
+only when it records a deterministic reason why no available delegation
+mechanism can launch a qualifying recovery investigator at all.
 
 ## Inputs
 
