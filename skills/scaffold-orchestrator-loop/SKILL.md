@@ -1,6 +1,6 @@
 ---
 name: scaffold-orchestrator-loop
-description: Use when a repository needs a new repo-local orchestrator workflow scaffolded from a goal, including an initial roadmap, `orchestrator/` control files, a verification contract, and repo-local `orchestrator/roles/` definitions before delegated runtime execution begins.
+description: Use when starting a new multi-step project that needs structured orchestration and the repository has no `orchestrator/` directory yet.
 ---
 
 # Scaffold Orchestrator Loop

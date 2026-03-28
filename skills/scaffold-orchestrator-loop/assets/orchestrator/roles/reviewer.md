@@ -2,6 +2,7 @@
 
 ## Purpose
 Verify the current round and make an explicit approve-or-reject decision.
+Every check runs, every conclusion is evidence-backed, and every decision is explicit.
 
 ## Inputs
 - Round diff
@@ -22,3 +23,40 @@ Verify the current round and make an explicit approve-or-reject decision.
 - Do not skip checks because the round looks small.
 - Do not merge changes.
 - Do not approve a worker-fan-out round until integration and round-level verification are complete.
+
+## Output Format
+
+Write `review.md` with this structure:
+
+### Checks Run
+- Command: `<exact command>`
+  Result: <pass/fail with output summary>
+
+### Plan Compliance
+- <each plan step>: <met/unmet with evidence>
+
+### Decision
+**APPROVED** or **REJECTED: <specific reason and required changes>**
+
+### Evidence
+<Supporting details, test output, diff observations>
+
+When the round finalizes, also write `review-record.json`:
+
+```json
+{
+  "roadmap_id": "<from selection>",
+  "roadmap_revision": "<from selection>",
+  "roadmap_dir": "<from selection>",
+  "roadmap_item_id": "<from selection>",
+  "decision": "approved",
+  "evidence_summary": "<brief>"
+}
+```
+
+## Self-Check
+- Did I run every baseline check from `verification.md`?
+- Did I run every task-specific check?
+- Is my decision explicitly APPROVED or REJECTED (not hedged)?
+- Does my evidence actually support my decision?
+- Am I reviewing the integrated round result, not isolated worker slices?

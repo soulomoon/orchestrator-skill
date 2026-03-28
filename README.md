@@ -129,69 +129,23 @@ skills/
 
 Use project-local installs as the documented supported path.
 
-Live validation on 2026-03-26 confirmed project-local installs for `claude-code`, `cursor`, `codex`, `gemini-cli`, `github-copilot`, and `opencode`. Global commands are intentionally omitted because the current `skills` CLI reported non-Claude global installs as `not linked`, so project-local installation is the documented supported path.
-Run the `npx skills add ...` commands from the target repository root where these skills will be used.
-Run the verification command from that same repository root; success means both `scaffold-orchestrator-loop` and `run-orchestrator-loop` appear in the project skills list.
+Run the commands below from the target repository root where these skills will
+be used. Replace `<agent>` with your host agent identifier.
 
-### Claude Code
-
-```bash
-# project-local install
-npx skills add https://github.com/soulomoon/orchestrator-skill --agent claude-code --skill scaffold-orchestrator-loop -y
-npx skills add https://github.com/soulomoon/orchestrator-skill --agent claude-code --skill run-orchestrator-loop -y
-# project-local verification
-npx skills ls --agent claude-code
-```
-
-### Cursor
+**Supported agents:** `claude-code`, `cursor`, `codex`, `gemini-cli`,
+`github-copilot`, `opencode`
 
 ```bash
-# project-local install
-npx skills add https://github.com/soulomoon/orchestrator-skill --agent cursor --skill scaffold-orchestrator-loop -y
-npx skills add https://github.com/soulomoon/orchestrator-skill --agent cursor --skill run-orchestrator-loop -y
-# project-local verification
-npx skills ls --agent cursor
+# install both skills
+npx skills add https://github.com/soulomoon/orchestrator-skill --agent <agent> --skill scaffold-orchestrator-loop -y
+npx skills add https://github.com/soulomoon/orchestrator-skill --agent <agent> --skill run-orchestrator-loop -y
+
+# verify installation
+npx skills ls --agent <agent>
 ```
 
-### Codex
-
-```bash
-# project-local install
-npx skills add https://github.com/soulomoon/orchestrator-skill --agent codex --skill scaffold-orchestrator-loop -y
-npx skills add https://github.com/soulomoon/orchestrator-skill --agent codex --skill run-orchestrator-loop -y
-# project-local verification
-npx skills ls --agent codex
-```
-
-### Gemini CLI
-
-```bash
-# project-local install
-npx skills add https://github.com/soulomoon/orchestrator-skill --agent gemini-cli --skill scaffold-orchestrator-loop -y
-npx skills add https://github.com/soulomoon/orchestrator-skill --agent gemini-cli --skill run-orchestrator-loop -y
-# project-local verification
-npx skills ls --agent gemini-cli
-```
-
-### GitHub Copilot
-
-```bash
-# project-local install
-npx skills add https://github.com/soulomoon/orchestrator-skill --agent github-copilot --skill scaffold-orchestrator-loop -y
-npx skills add https://github.com/soulomoon/orchestrator-skill --agent github-copilot --skill run-orchestrator-loop -y
-# project-local verification
-npx skills ls --agent github-copilot
-```
-
-### OpenCode
-
-```bash
-# project-local install
-npx skills add https://github.com/soulomoon/orchestrator-skill --agent opencode --skill scaffold-orchestrator-loop -y
-npx skills add https://github.com/soulomoon/orchestrator-skill --agent opencode --skill run-orchestrator-loop -y
-# project-local verification
-npx skills ls --agent opencode
-```
+Success means both `scaffold-orchestrator-loop` and `run-orchestrator-loop`
+appear in the project skills list.
 
 ## Contributor Appendix
 
@@ -223,7 +177,9 @@ If either path already exists in `~/.codex/skills`, move or remove the existing 
 
 ## Source Documents
 
-The design and implementation plan used to build this repo are checked in under:
+The original design rationale and implementation plans are checked in under
+`docs/superpowers/`. These explain why decisions were made and are useful
+context for contributors:
 
 - [docs/superpowers/specs/2026-03-26-platform-neutral-orchestrator-design.md](docs/superpowers/specs/2026-03-26-platform-neutral-orchestrator-design.md)
 - [docs/superpowers/specs/2026-03-27-parallel-orchestrator-design.md](docs/superpowers/specs/2026-03-27-parallel-orchestrator-design.md)

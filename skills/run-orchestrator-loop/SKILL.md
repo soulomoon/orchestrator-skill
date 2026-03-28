@@ -1,74 +1,58 @@
 ---
 name: run-orchestrator-loop
-description: Use when a repository already has an initialized `orchestrator/` directory and needs the delegated orchestrator loop started or resumed through guider, planner, implementer, reviewer, and merger stages.
+description: Use when `orchestrator/` and `orchestrator/state.json` exist in a repository and the delegated orchestrator loop needs to start or resume.
 ---
 
 # Run Orchestrator Loop
 
 ## Overview
 
-Act as a pure controller over the persisted repo-local orchestrator contract.
-Read `orchestrator/state.json`, resolve the active roadmap bundle from
-`roadmap_id`, `roadmap_revision`, and `roadmap_dir`, load any repo-local retry
-rules from that bundle, load the required runtime roles from
-`orchestrator/roles/`, delegate every substantive stage to fresh real
-subagents, update only machine-control state, and continue until the roadmap is
-complete.
+Act as a pure controller over the persisted repo-local orchestrator contract:
+read `orchestrator/state.json`, resolve the active roadmap bundle from
+`roadmap_id`, `roadmap_revision`, and `roadmap_dir`, load runtime roles from
+`orchestrator/roles/`, delegate substantive work to fresh real subagents, and
+update only machine-control state.
 
-Serial repositories remain valid. When additive parallel fields are missing,
-normalize them to safe serial defaults instead of treating them as fatal
-corruption. Parallel rounds and worker fan-out are allowed only when the
-repo-local roadmap, state, and plan artifacts explicitly authorize them.
+Serial repositories remain valid. If additive parallel fields are missing,
+normalize to safe serial defaults instead of treating that as corruption.
+Parallel rounds and worker fan-out are allowed only when repo-local artifacts
+explicitly authorize them.
 
-Treat incidental delegation failure as missing or untrustworthy stage artifacts
-that leave the controller without trustworthy controller-visible evidence for
-the active stage outcome.
-
-If incidental delegation failure occurs, the controller must first attempt a
-qualifying `recovery-investigator` before it may stop on that failure. Only
-after an attempted `recovery-investigator` fails, or after the controller
-records a deterministic reason why no available delegation mechanism can launch
-one, may the controller record precise blockage in `orchestrator/state.json`
-and tell the user this skill cannot honor its delegation contract in the
-current environment.
+For incidental delegated-stage failure, attempt a qualifying
+`recovery-investigator` before stopping. Record blockage in `state.json` only
+after recovery is exhausted or deterministically unavailable.
 
 ## Workflow
 
 1. Load state and references.
 2. Normalize legacy serial state into safe controller defaults.
-3. Resume live rounds from `active_rounds[]` or dispatch new rounds up to
-   `max_parallel_rounds`.
-4. Use one `orchestrator/round-<nn>-<slug>` branch and one
-   `orchestrator/worktrees/<round-id>` worktree per round.
-5. If a round plan authors `worker-plan.json`, launch worker implementers plus
-   an integration implementer exactly as that contract requires.
-6. Move reviewed rounds through `pending-merge`, `merge`, and `update-roadmap`
-   only when merge-order and base-branch rules allow it.
-7. Re-read `state.json` plus the active roadmap bundle before deciding whether
-   another round must start immediately.
+3. Resume live rounds from `active_rounds[]` or dispatch new rounds up to `max_parallel_rounds`.
+4. Use one `orchestrator/round-<nn>-<slug>` branch and one `orchestrator/worktrees/<round-id>` worktree per round.
+5. If a round plan authors `worker-plan.json`, launch worker implementers and an integration implementer exactly as required.
+6. Move reviewed rounds through `pending-merge`, `merge`, and `update-roadmap` only when merge-order and base-branch rules allow it.
+7. Re-read `state.json` plus the active roadmap bundle before deciding whether another round must start immediately.
 
-## Load Before Acting
-
-Read these files first:
+## Load at Startup
 
 - `orchestrator/state.json`
-- active roadmap bundle `roadmap.md` resolved from `state.json.roadmap_dir`
-- active roadmap bundle `verification.md` resolved from `state.json.roadmap_dir`
-- active roadmap bundle `retry-subloop.md` resolved from `state.json.roadmap_dir`
-- `orchestrator/roles/guider.md`
-- `orchestrator/roles/planner.md`
-- `orchestrator/roles/implementer.md`
-- `orchestrator/roles/reviewer.md`
-- `orchestrator/roles/merger.md`
-- `orchestrator/roles/recovery-investigator.md`
-- [state-machine.md](references/state-machine.md) as supporting documentation
-- [resume-rules.md](references/resume-rules.md) as supporting documentation
-- [recovery-investigator.md](references/recovery-investigator.md) as supporting
-  documentation for the scaffolded recovery role contract
-- [delegation-boundaries.md](references/delegation-boundaries.md) as supporting
-  documentation
-- [worktree-merge-rules.md](references/worktree-merge-rules.md) as supporting
-  documentation
+- Active roadmap bundle `roadmap.md` resolved from `state.json.roadmap_dir`
+- Active roadmap bundle `retry-subloop.md` resolved from `state.json.roadmap_dir`
+- [state-machine.md](references/state-machine.md)
+- [resume-rules.md](references/resume-rules.md)
+
+## Load Per Stage
+
+- `select-task` / `update-roadmap`: `orchestrator/roles/guider.md`
+- `plan`: `orchestrator/roles/planner.md`
+- `implement`: `orchestrator/roles/implementer.md`
+- `review`: `orchestrator/roles/reviewer.md`, active roadmap bundle
+  `verification.md`
+- `merge`: `orchestrator/roles/merger.md`
+- Recovery: `orchestrator/roles/recovery-investigator.md` and
+  [recovery-investigator.md](references/recovery-investigator.md)
+- Worktree/merge operations:
+  [worktree-merge-rules.md](references/worktree-merge-rules.md) and
+  [delegation-boundaries.md](references/delegation-boundaries.md)
 
 ## Stage Rules
 
@@ -91,43 +75,16 @@ Do not simulate these roles in your own voice.
 ## Controller Rules
 
 - Update only machine-control state directly.
+- Normalize old serial state into the current schema before scheduling.
 - Require `roadmap_id`, `roadmap_revision`, and `roadmap_dir` in
   `orchestrator/state.json`; if any are missing or unusable, stop and record
   the exact controller error instead of guessing.
-- Treat `roadmap_id` as an opaque scaffolded identifier that should normally
-  look like `YYYY-MM-DD-NN-<slug>`; preserve it verbatim and do not recompute
-  it from roadmap titles or paths.
-- Do not treat top-level `orchestrator/roadmap.md`,
-  `orchestrator/verification.md`, or `orchestrator/retry-subloop.md` as live
-  sources in this contract.
-- Load each required runtime role only from `orchestrator/roles/<role>.md`.
-- If any required `orchestrator/roles/<role>.md` file is missing, stop and
-  record the exact controller error instead of inventing a fallback path.
-- Normalize old serial state into the current schema before scheduling.
-- Use round branches named `orchestrator/round-<nn>-<slug>`.
-- Use round worktrees at `orchestrator/worktrees/<round-id>`.
-- Keep the same round id, branch, and worktree until the round is finalized.
-- Launch multiple rounds only when roadmap metadata explicitly marks the items
-  parallel-safe and dependency-clean.
-- Respect `max_parallel_rounds` as a hard cap.
-- When repo-local review output requests retry, return to `plan`,
-  `implement`, or `review` exactly as the repo-local retry contract requires.
-- Resume the exact incomplete stage and exact retry attempt after interruption.
-- Merge only after explicit reviewer approval that finalizes the current round
-  under the repo-local contract.
-- Treat `pending-merge` as a legal round stage when merge ordering or base
-  freshness blocks immediate merge.
-- Require planner-authored `worker-plan.json` before launching worker fan-out.
-- If worker fan-out is active, launch worker implementers on their assigned
-  worker branches/worktrees and launch an integration implementer for canonical
-  round recomposition when required by the worker plan.
-- Do not invent retry behavior; read it from repo-local state and the active
-  roadmap bundle `retry-subloop.md`.
-- During recovery, the controller may take broad controller-owned recovery
-  actions such as re-reading state, inspecting controller-visible evidence,
-  recreating or reopening recorded worktrees, relaunching delegation, and
-  recording controller-owned recovery notes, but it may not author
-  guider/planner/implementer/reviewer/merger artifacts.
+- Treat `roadmap_id` as an opaque scaffolded identifier, usually
+  `YYYY-MM-DD-NN-<slug>`; preserve it verbatim and never recompute it from
+  titles, paths, or directory names.
+- Resolve live roadmap files only from `state.json.roadmap_dir`; do not use
+  top-level `orchestrator/roadmap.md`, `orchestrator/verification.md`, or
+  `orchestrator/retry-subloop.md` as runtime sources.
 - After `update-roadmap`, re-read `orchestrator/state.json`, resolve the active
   roadmap bundle again from `roadmap_dir`, and immediately start the next round
   when unfinished `[pending]` or `[in-progress]` items remain and the
@@ -135,44 +92,20 @@ Do not simulate these roles in your own voice.
 - Treat controller `done` as terminal only when the roadmap has no unfinished
   items, there are no live rounds, or a recorded controller blockage or user
   interruption lawfully stops progress.
-- Do not treat a delegated-stage failure as a lawful stop merely because the
-  first role subagent returned unusable output or produced no stage artifact.
-  For any non-terminal stop caused by missing or untrustworthy delegated-stage
-  output, attempt `recovery-investigator` first.
-- Before stopping or sending a final response, verify one of:
-  - the active roadmap bundle `roadmap.md` has no unfinished `[pending]` or
-    `[in-progress]` items and `active_rounds` is empty;
-  - `orchestrator/state.json` records a precise controller blockage or
-    `resume_error` that prevents safe progress; or
-  - the user explicitly interrupted or redirected the loop.
 - If the guider authored a new roadmap revision during `update-roadmap`,
   activate it by updating `state.json` `roadmap_id`, `roadmap_revision`, and
   `roadmap_dir` before the next roadmap re-check.
+- See [delegation-boundaries.md](references/delegation-boundaries.md) and
+  [state-machine.md](references/state-machine.md) for complete rules.
 
 ## Recovery Rules
 
-- An available delegation mechanism is any mechanism that can launch a fresh
-  real subagent in the current environment, keep it running without timeout or
-  interruption, and preserve the repo-local role contract.
-- When incidental delegation failure occurs, launch a dedicated real-subagent
-  `recovery-investigator` from `orchestrator/roles/recovery-investigator.md`
-  before recording a delegation-failure stop. Treat
-  [recovery-investigator.md](references/recovery-investigator.md) as supporting
-  documentation only.
-- The `recovery-investigator` may recommend retrying with the same mechanism or
-  switching to another available real-subagent mechanism.
-- Record the precise direct blockage in `orchestrator/state.json` only after
-  the controller has either:
-  - attempted `recovery-investigator` and still lacks a qualifying recovery
-    result; or
-  - recorded a deterministic reason why no available delegation mechanism can
-    launch a qualifying `recovery-investigator`.
-- The controller must not infer `recovery-investigator` unavailability solely
-  from the failed role-stage launch itself.
-- Before the controller leaves recovery, re-check that the expected stage
-  artifact exists and matches the current round, stage, retry attempt, active
-  roadmap identity, and repo-local contract.
-- Record terminal blockage only after lawful recovery paths are exhausted.
+- For any non-terminal delegated-stage failure, attempt a qualifying
+  `recovery-investigator` before recording blockage in `orchestrator/state.json`.
+- Record direct blockage only after `recovery-investigator` has been attempted
+  and failed to produce a qualifying recovery path, or after recording a
+  deterministic reason no available delegation mechanism can launch one.
+- See [recovery-investigator.md](references/recovery-investigator.md) and [resume-rules.md](references/resume-rules.md) for complete recovery procedures.
 
 ## Subagent Rules
 
@@ -184,24 +117,46 @@ Do not simulate these roles in your own voice.
 
 ## Completion
 
-Continue until every roadmap item in the active roadmap bundle is complete or a
-recorded controller error blocks safe progress. Do not stop merely because one
-round reaches `done`; terminal completion requires a roadmap re-check that
-confirms there are no unfinished items and no live rounds, or a lawful
-recorded blockage or explicit user interruption. For non-terminal delegated
-stage failures, a stop is lawful only after `recovery-investigator` has been
-attempted or deterministically ruled out as unavailable. When blocked by
-corrupt or missing state, exhaust lawful recovery paths first, then record the
-exact problem in `state.json` instead of guessing.
+Continue until every roadmap item in the active bundle is complete or a
+recorded controller error lawfully blocks safe progress. Do not stop just
+because one round reaches `done`; terminal completion requires a roadmap
+re-check confirming no unfinished items and no live rounds, or a lawful
+recorded blockage or explicit user interruption. For non-terminal
+delegated-stage failures, stop only after `recovery-investigator` has been
+attempted or deterministically ruled out. For corrupt or missing state, exhaust
+lawful recovery paths before recording the exact problem in `state.json`.
+
+## Common Mistakes
+
+- Simulating roles by writing `selection.md`, `plan.md`, or `review.md` yourself.
+- Skipping `recovery-investigator` and recording blockage after one delegation failure.
+- Inventing parallelism by launching rounds without roadmap metadata authorization.
+- Guessing missing state by inferring `roadmap_id` from directory names.
+- Treating `pending-merge` as done and proceeding before merge-order is satisfied.
+- Authoring delegated artifacts by writing `implementation-notes.md` or `merge.md` yourself.
+
+## Pre-Completion Self-Check
+
+Before sending a final response, verify ALL of these:
+- `state.json` `active_rounds` is empty
+- Active roadmap bundle has no `[pending]` or `[in-progress]` items
+- No unresolved `resume_error` or `resume_errors` entries remain
+- If stopping due to blockage: precise error recorded in `state.json`
+- If stopping due to user interruption: state is consistent and saved
+
+## Operational Limits
+
+- Maximum 3 consecutive retry attempts per round before recording blockage
+- Maximum 50 tool calls per delegated stage before pausing for assessment
+- If total completed rounds exceed 2x the roadmap item count, pause and
+  reassess with the user
+- If a single round has cycled through review -> plan -> implement -> review
+  more than 3 times, record the pattern and ask the user
 
 ## Resources
 
-- [state-machine.md](references/state-machine.md): controller and round stage
-  order, ownership, and legal transitions
-- [resume-rules.md](references/resume-rules.md): automatic resume behavior
-- [recovery-investigator.md](references/recovery-investigator.md): supporting
-  documentation for the scaffolded recovery role contract
-- [delegation-boundaries.md](references/delegation-boundaries.md): supporting
-  documentation for what the controller may and may not do
-- [worktree-merge-rules.md](references/worktree-merge-rules.md): supporting
-  documentation for per-round and per-worker worktree plus merge rules
+- [state-machine.md](references/state-machine.md)
+- [resume-rules.md](references/resume-rules.md)
+- [recovery-investigator.md](references/recovery-investigator.md)
+- [delegation-boundaries.md](references/delegation-boundaries.md)
+- [worktree-merge-rules.md](references/worktree-merge-rules.md)

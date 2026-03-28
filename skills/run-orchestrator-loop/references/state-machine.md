@@ -64,3 +64,36 @@ update `state.json` roadmap metadata before evaluating those transitions.
 
 Do not skip forward and do not invent parallelism that the roadmap or planner
 artifacts do not authorize.
+
+## Visual Overview
+
+### Controller Flow
+
+```mermaid
+stateDiagram-v2
+    [*] --> dispatch_rounds
+    dispatch_rounds --> update_roadmap: round merged
+    update_roadmap --> dispatch_rounds: unfinished items remain
+    update_roadmap --> done: all items done, no live rounds
+    done --> dispatch_rounds: unfinished items remain
+    done --> [*]: terminal
+```
+
+### Round Flow
+
+```mermaid
+stateDiagram-v2
+    [*] --> select_task
+    select_task --> plan
+    plan --> implement
+    implement --> review
+    review --> plan: full retry
+    review --> pending_merge: approved but blocked
+    review --> merge: approved and merge ready
+    pending_merge --> implement: needs refresh
+    pending_merge --> review: needs re-review
+    pending_merge --> plan: needs replan
+    pending_merge --> merge: blockers cleared
+    merge --> done
+    done --> [*]
+```

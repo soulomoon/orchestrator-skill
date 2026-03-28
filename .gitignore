@@ -1,1 +1,2 @@
-docs/superpowers/
+# Orchestrator worktrees in target repos are gitignored by those repos,
+# not by this skill repository.
