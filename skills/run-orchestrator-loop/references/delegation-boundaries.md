@@ -71,13 +71,24 @@ Runtime role loading happens only from `orchestrator/roles/`.
 - Use real subagents, not simulated roles.
 - Load each runtime role only from `orchestrator/roles/<role>.md`.
 - Prefer reusing or resuming an existing compatible subagent before spawning a
-  fresh one. A compatible subagent has the same runtime role, same round id or
-  roadmap-update id, same branch/worktree, same selected lineage, and no
-  unresolved instruction conflict with the current stage.
+  fresh one. Compatibility has two levels:
+  - Same-stage resume compatibility requires the same runtime role, same round
+    id or roadmap-update id, same branch/worktree, same selected lineage, and
+    no unresolved instruction conflict with the current stage.
+  - Cross-round same-role reuse compatibility requires the same runtime role in
+    the same repository control plane, a finished or idle handle, no unresolved
+    prior task, no stale or unusable recovery mark, and an explicit new
+    assignment that rebinds the handle to the new round id, branch/worktree,
+    selected lineage, and artifact paths. The new assignment must tell the
+    subagent to reload current state and treat prior round details as historical
+    context only.
 - Same-round retry should first go back to the prior compatible role subagent:
   planner retries to the planner, whole-round implementation retries to the
   implementer, integration retries to the integration implementer, worker
   retries to the named worker, and review-only retries to the reviewer.
+- New rounds should first use an idle cross-round compatible same-role subagent
+  when the host exposes one. Round merge makes a finished handle idle for
+  same-role reuse; it is not by itself a reason to close the handle.
 - Resume a closed but resumable compatible subagent when the host supports it;
   otherwise send the next task to an idle compatible subagent. If no compatible
   prior subagent exists, if the prior subagent is non-observable, stale,
@@ -94,9 +105,14 @@ Runtime role loading happens only from `orchestrator/roles/`.
   observation intervals are allowed for liveness checks.
 - Wait for the subagent to finish before continuing.
 - Close or release host subagent handles only after they are finished and no
-  longer compatible with same-role reuse, such as after the round is merged,
-  the roadmap update is cleared, lineage changes, a role boundary would be
-  crossed, or recovery marks the handle stale or unusable.
+  longer compatible with same-role reuse, such as when the control plane is
+  terminal with no expected same-role work, the role prompt or control-plane
+  contract changes incompatibly, a role boundary would be crossed, recovery
+  marks the handle stale or unusable, or the host requires release for resource
+  management.
+- Do not close a healthy finished handle solely because a round merged or a
+  roadmap update cleared. Keep it available for later same-role work unless one
+  of the close conditions above applies.
 - Do not close a live compatible subagent to force progress; first consume its
   controller-visible artifacts or enter the recovery ladder below.
 - After 50 tool calls in one delegated stage, pause for assessment before

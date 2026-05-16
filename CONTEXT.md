@@ -23,5 +23,5 @@
 - **Controller state shape**: The minimal persisted `state.json` interface the orchestrator control plane treats as authoritative. It should avoid fields that can be derived from canonical round or roadmap-update records.
 - **Controller blockage**: A recoverable control-plane problem that is not owned by a specific round or roadmap-update record. It is recorded under structured controller error state, not as a separate scalar mirror.
 - **Role subagent**: A delegated agent running one orchestrator role from `orchestrator/roles/`, such as guider, planner, implementer, reviewer, or recovery investigator.
-- **Compatible prior handle**: A previously launched role subagent that still matches the same role, round, branch, worktree, and lineage closely enough to resume instead of spawning a fresh subagent.
+- **Compatible prior handle**: A previously launched role subagent that can be reused instead of spawning a fresh subagent. Same-stage resume compatibility requires matching role, round, branch, worktree, and lineage; cross-round reuse compatibility requires an idle same-role handle that can be rebound with the new round assignment, reload current state, and avoid treating old round context as current.
 - **Legacy compatibility layer**: The removed roadmap and mirror-field compatibility support described in `docs/adr/0001-retire-compatibility-layers.md`.

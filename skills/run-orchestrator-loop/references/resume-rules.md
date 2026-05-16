@@ -45,6 +45,9 @@ load order. This file adds recovery-specific validation and resume decisions.
 13. If the host exposes prior subagent handles for the recorded role/stage,
     prefer the compatible prior subagent under
     `delegation-boundaries.md` before launching a new one.
+14. When dispatching a new round role and the host exposes finished or idle
+    same-role handles from prior rounds, prefer a cross-round compatible handle
+    under `delegation-boundaries.md` before launching a fresh one.
 
 ## Round Artifact Path Resolution
 

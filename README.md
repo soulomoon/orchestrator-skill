@@ -48,6 +48,8 @@ It is responsible for:
   load their runtime instructions from `orchestrator/roles/`; the planner owns
   normal task selection and writes `selection-record.json`, and rejected
   reviews carry a machine retry target for same-round feedback
+- reusing finished same-role subagents across later rounds when the handle can
+  be rebound safely to the new round assignment
 - updating only controller-owned state
 - finalizing approved rounds by applying reviewer-approved status-only closeout
   when needed, deriving merge admissibility, squash-merging, and using a
@@ -65,6 +67,9 @@ The runtime loop is strict about ownership:
   hints, and extracted-scope boundaries explicitly allow concurrency.
 - Each live round uses one canonical branch plus one canonical worktree.
 - Different rounds may be active at the same time when the roadmap and controller state authorize it.
+- Finished planner, implementer, reviewer, guider, and recovery-investigator
+  handles are not closed just because a round merged; healthy idle handles may
+  be reused for later work in the same role.
 - Review rejection or drift can send a round back to `implement` for bounded
   fixes or `plan` for replanning, using the retry target recorded in
   `review-record.json`. Finalization drift can also require re-review before
@@ -265,4 +270,6 @@ the symlink.
 - Reviewer approval is required before merge.
 - Reviewer rejection must name a same-round retry target before the controller
   redispatches fixes or replanning.
+- Same-role subagents may be reused across rounds; role boundaries still
+  require separate handles.
 - Merge strategy is squash merge into the recorded base branch.
