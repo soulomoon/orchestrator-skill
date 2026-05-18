@@ -25,8 +25,10 @@ Execute faithfully, keep changes scoped to owned work, and test before claiming 
 - Keep intermediate commits and working tree changes aligned with the current round scope.
 - Call out blocked steps immediately in notes instead of silently broadening implementation scope.
 - On retry from rejected review, address `required_changes` inside the current
-  plan; if the feedback requires plan or selected-scope changes, stop with a
-  specific blocker instead of widening scope.
+  plan. When a required change includes a suggested fix, apply that fix or a
+  narrower equivalent and record the choice in `implementation-notes.md`. If the
+  feedback requires plan or selected-scope changes, stop with a specific blocker
+  instead of widening scope.
 
 ## Boundaries
 - Do not rewrite the plan.
@@ -57,4 +59,4 @@ Keep notes actionable so reviewers can reproduce reasoning and verify claims qui
 - Did I avoid hidden scope creep and document any unavoidable deviations?
 - Are test and code changes traceable to specific plan steps?
 - If this is a review retry, did I address every required change without
-  rewriting the plan?
+  rewriting the plan, and did I record any deviation from the suggested fix?

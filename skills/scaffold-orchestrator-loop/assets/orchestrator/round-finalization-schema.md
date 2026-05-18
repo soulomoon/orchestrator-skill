@@ -85,8 +85,8 @@ Rejected reviews must still write a machine-readable retry decision:
   "evidence_summary": "Focused test is missing for the changed behavior.",
   "retry_target": "implement",
   "required_changes": [
-    "Add the focused regression test named in the round plan.",
-    "Update implementation notes with the exact verification command."
+    "Problem: focused regression test is missing for the changed behavior. Suggested fix: add the focused regression test named in the round plan.",
+    "Problem: implementation notes omit the verification command. Suggested fix: update implementation notes with the exact command and result."
   ]
 }
 ```
@@ -100,6 +100,8 @@ For `decision: "rejected"`:
 - Use `blocked` only when the reviewer found no lawful same-round retry
   target; `required_changes` must explain the blocker precisely.
 - `required_changes` is required and must contain at least one actionable item.
+- Each `required_changes[]` item should describe one blocking problem and the
+  smallest suggested fix. Do not include non-blocking notes.
 - `roadmap_closeout` must be absent or null.
 
 ## Closeout Modes
