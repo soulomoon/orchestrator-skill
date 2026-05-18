@@ -61,11 +61,12 @@ active roadmap bundle.
   `plan` -> `implement` -> `review` -> `finalize-round`, followed by terminal
   roadmap recheck. Advanced recovery, worker fan-out, parallel execution, and
   semantic roadmap-update machinery load only when their triggers are present.
-- The planner owns normal task selection and round planning. It writes
-  `selection-record.json`, `plan.md`, and `round-plan-record.json` for selected
-  implementable rounds, or `roadmap-update-request.md` when current evidence
-  shows the active roadmap must first be split or resequenced. The guider owns
-  semantic `update-roadmap` work, not normal task selection.
+- The planner owns roadmap stewardship: normal task selection, round planning,
+  and semantic `update-roadmap` authoring. It writes `selection-record.json`,
+  `plan.md`, and `round-plan-record.json` for selected implementable rounds, or
+  `roadmap-update-request.md` when current evidence shows the active roadmap
+  must first be split or resequenced. During `update-roadmap`, the same role
+  writes `roadmap-update.md` and the proposed roadmap revision.
 - Reviewer approval gates merge. Rejected reviews record a machine
   `retry_target` of `implement`, `plan`, or `blocked` plus specific required
   changes.

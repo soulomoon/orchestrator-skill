@@ -53,8 +53,8 @@ retry policy, and delegation boundaries before changing state, stepping a round
 backward, or recording blockage.
 
 ## Boundaries
-- Do not write artifacts owned by guider, planner, implementer, or reviewer.
-- Do not perform guider, planner, implementer, or reviewer substantive work.
+- Do not write artifacts owned by planner, implementer, or reviewer.
+- Do not perform planner, implementer, or reviewer substantive work.
 - Do not act as the stage reviewer during review-stage failures.
 - Do not author the controller-owned recovery note.
 - Do not perform repo or worktree repair actions.

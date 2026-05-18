@@ -76,8 +76,9 @@ load order. This file adds recovery-specific validation and resume decisions.
   state; do not edit the request while copying it.
 - Remove the unselected planning round from `active_rounds[]` before entering
   `controller_stage: "update-roadmap"`.
-- Keep the planner request as evidence only. The guider owns the actual
-  roadmap revision; reviewer approval is still required before activation.
+- Keep the planner request as evidence only. The planner owns the actual
+  `update-roadmap` revision in the roadmap-update branch/worktree, and
+  reviewer approval is still required before activation.
 
 ## Retry Outcomes
 
@@ -190,14 +191,14 @@ evidence.
 - If `roadmap-update-review.md` rejects the update, keep the same
   `roadmap_update` branch and worktree, increment `roadmap_update.attempt`, set
   status to `rejected`, record `last_rejection_artifact` and
-  `last_rejection_summary`, and re-dispatch the guider to revise
+  `last_rejection_summary`, and re-dispatch the planner to revise
   `roadmap-update.md` and the proposed revision in place unless the review
   records a non-recoverable blockage.
 - If the same roadmap update reaches 3 rejected attempts, set status to
   `blocked`, record the precise blocker in `roadmap_update.resume_error`, and
   do not dispatch another same-mechanism retry until recovery chooses a
   different lawful action.
-- After the guider revises a rejected roadmap update, set status back to
+- After the planner revises a rejected roadmap update, set status back to
   `review` and dispatch the reviewer again.
 - After approved roadmap-update merge and state activation, clear
   `state.json.roadmap_update`.

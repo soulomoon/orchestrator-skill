@@ -82,8 +82,8 @@ roadmap-shape field.
   planning artifacts, implementation artifacts, and review records.
 - The controller may apply only reviewer-approved status-only round closeout to
   the active roadmap revision.
-- The planner owns normal task selection and round planning. The guider owns
-  semantic roadmap updates.
+- The planner owns roadmap stewardship: normal task selection, round planning,
+  planner-requested split evidence, and semantic roadmap-update authoring.
 - Once any round has used a roadmap revision, follow
   `orchestrator/active-roadmap-bundle.md` for status-only round closeout versus
   semantic new revision publication.

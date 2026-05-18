@@ -38,7 +38,7 @@ the recorded blockage note.
 - `finalize-round`: controller applies reviewer-approved status-only roadmap
   bookkeeping, derives merge admissibility, performs squash merge bookkeeping,
   and dispatches semantic roadmap updates when required
-- semantic `update-roadmap`: guider authors, reviewer approves
+- semantic `update-roadmap`: planner authors, reviewer approves
 
 ## Controller Legal Transitions
 
@@ -63,7 +63,7 @@ the recorded blockage note.
   unfinished milestones under `orchestrator/active-roadmap-bundle.md` and there
   are no live rounds
 - `update-roadmap` -> `update-roadmap` after rejected roadmap-update review
-  when the guider must revise the same roadmap-update branch/worktree
+  when the planner must revise the same roadmap-update branch/worktree
 - `update-roadmap` -> `blocked` after 3 rejected roadmap-update attempts or a
   non-recoverable roadmap-update review rejection
 - `blocked` -> `dispatch-rounds` when automatic recovery can resume from the

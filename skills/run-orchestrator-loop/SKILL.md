@@ -62,6 +62,7 @@ Do not simulate delegated roles in the controller. For `plan`, `implement`,
 `review`, `update-roadmap`, worker slices, integration implementation, and
 recovery investigation, load the repo-local role prompt and delegate through
 real subagents under [delegation-boundaries.md](references/delegation-boundaries.md).
+`plan` and `update-roadmap` both use `orchestrator/roles/planner.md`.
 
 ## Completion
 

@@ -60,14 +60,13 @@ Runtime role loading happens only from `orchestrator/roles/`.
 
 ## The Orchestrator Must Delegate
 
-- normal round task selection, round planning, and worker fan-out assignment
-  design
-- semantic roadmap bundle edits
+- normal round task selection, round planning, worker fan-out assignment
+  design, and semantic roadmap bundle edits
 - roadmap update review
 - implementation
 - integration implementation when worker fan-out is active
 - review decisions
-- all substantive guider/planner/implementer/reviewer outputs, including
+- all substantive planner/implementer/reviewer outputs, including
   retry-stage outputs
 
 ## Subagent Rules
@@ -90,6 +89,9 @@ Runtime role loading happens only from `orchestrator/roles/`.
   planner retries to the planner, whole-round implementation retries to the
   implementer, integration retries to the integration implementer, worker
   retries to the named worker, and review-only retries to the reviewer.
+- A planner handle that produced `roadmap-update-request.md` may be reused for
+  the resulting `update-roadmap` stage after rebinding it to the
+  roadmap-update branch/worktree because this remains the same runtime role.
 - New rounds should first use an idle cross-round compatible same-role subagent
   when the host exposes one. Round merge makes a finished handle idle for
   same-role reuse; it is not by itself a reason to close the handle.
