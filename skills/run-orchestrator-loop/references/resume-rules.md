@@ -40,6 +40,8 @@ load order. This file adds recovery-specific validation and resume decisions.
     recorded canonical round worktree using `orchestrator/artifact-manifest.md`.
     A round in `plan` may not have `selection-record.json` yet; the planner is
     responsible for creating it before the round can advance to `implement`.
+    If that plan-stage worktree instead contains `roadmap-update-request.md`,
+    enter the pre-implementation roadmap update path below.
 12. If repo-local machine state includes retry bookkeeping, resume the exact
     recorded attempt instead of guessing a new one.
 13. If the host exposes prior subagent handles for the recorded role/stage,
@@ -56,6 +58,26 @@ load order. This file adds recovery-specific validation and resume decisions.
 - During resume, absence from the parent checkout is not evidence that a
   delegated stage failed when the manifest says the artifact is still live in a
   recorded round worktree.
+
+## Pre-Implementation Roadmap Update Requests
+
+- A planner-authored `roadmap-update-request.md` is valid only for a round still
+  in `plan`, before `selection-record.json`, `plan.md`, or
+  `round-plan-record.json` has selected implementable work.
+- The request means the planner found no bounded dependency-ready round without
+  first changing future coordination, such as splitting a broad milestone based
+  on current docs, ADRs, context, code, or tests.
+- Do not merge the planning round and do not treat it as completed work.
+- Record a `state.json.roadmap_update` using the planning round id as
+  `source_round_id`, `trigger` set to `planner-request`, and the next proposed
+  roadmap revision under `orchestrator/roadmap-update-schema.md`.
+- Preserve the planner-authored request verbatim in the roadmap-update
+  worktree at its manifest path before removing the planning round from active
+  state; do not edit the request while copying it.
+- Remove the unselected planning round from `active_rounds[]` before entering
+  `controller_stage: "update-roadmap"`.
+- Keep the planner request as evidence only. The guider owns the actual
+  roadmap revision; reviewer approval is still required before activation.
 
 ## Retry Outcomes
 
@@ -158,7 +180,7 @@ evidence.
 - If `controller_stage` is `update-roadmap`, read `state.json.roadmap_update`
   under `orchestrator/roadmap-update-schema.md` and reopen the recorded
   roadmap-update branch/worktree when present, or recreate them from the base
-  branch after the merged round when lawful.
+  branch after the merged round or planner-request source when lawful.
 - Observe `orchestrator/roadmap-updates/<round-id>-roadmap-update.md` and the
   matching review artifact before deciding whether the update is complete.
 - Do not activate a new `roadmap_revision` or treat the roadmap update as done

@@ -45,8 +45,9 @@ active roadmap bundle.
   planning data and optional worker fan-out. `review-record.json` and
   `closeout-record.json` follow `round-finalization-schema.md`.
 - Semantic roadmap updates: `roadmap-update-schema.md` owns
-  `state.json.roadmap_update`, update branch/worktree conventions, update and
-  review artifacts, rejection handling, and activation.
+  `state.json.roadmap_update`, merged-round and planner-request triggers,
+  update branch/worktree conventions, update and review artifacts, rejection
+  handling, and activation.
 - Retry policy: shared retry mechanics live in runtime references.
   Roadmap-specific retry overrides live under active-bundle `verification.md`
   `## Roadmap Overrides`; do not create a separate required retry-policy file.
@@ -61,8 +62,10 @@ active roadmap bundle.
   roadmap recheck. Advanced recovery, worker fan-out, parallel execution, and
   semantic roadmap-update machinery load only when their triggers are present.
 - The planner owns normal task selection and round planning. It writes
-  `selection-record.json`, `plan.md`, and `round-plan-record.json`. The guider
-  owns semantic `update-roadmap` work, not normal task selection.
+  `selection-record.json`, `plan.md`, and `round-plan-record.json` for selected
+  implementable rounds, or `roadmap-update-request.md` when current evidence
+  shows the active roadmap must first be split or resequenced. The guider owns
+  semantic `update-roadmap` work, not normal task selection.
 - Reviewer approval gates merge. Rejected reviews record a machine
   `retry_target` of `implement`, `plan`, or `blocked` plus specific required
   changes.
@@ -77,8 +80,10 @@ active roadmap bundle.
   milestone or direction meaning, sequencing, parallel lanes, extraction scope,
   verification meaning, or retry policy.
 - Semantic roadmap updates are delegated, reviewable, and serialized through
-  `state.json.roadmap_update`. Only one semantic roadmap update may be active.
-  Approved updates publish a new roadmap revision before activation.
+  `state.json.roadmap_update`. They may come from a merged round or from a
+  planner-requested pre-implementation split, but only one semantic roadmap
+  update may be active. Approved updates publish a new roadmap revision before
+  activation.
 - Used roadmap revisions are durable history. Do not rewrite a used revision
   except for reviewer-approved status-only closeout in the canonical round
   worktree before merge.
@@ -116,9 +121,9 @@ active roadmap bundle.
   anchors and that every applied edit appears in the approved
   `review-record.json`. After base refresh, revalidate `closeout-record.json`
   before merge.
-- Verify semantic roadmap updates use `roadmap-update-schema.md`, have reviewer
-  approval before activation, and clear `state.json.roadmap_update` only after
-  the approved revision is active.
+- Verify semantic roadmap updates use `roadmap-update-schema.md`, record the
+  correct trigger, have reviewer approval before activation, and clear
+  `state.json.roadmap_update` only after the approved revision is active.
 - Verify new roadmap families preserve prior families, prior revisions, prior
   rounds, worktrees, and role files unless an approved migration explicitly says
   otherwise.

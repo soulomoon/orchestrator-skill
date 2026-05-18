@@ -31,9 +31,12 @@ bounded scope.
 - Treat `selection-record.json` as the machine authority for lineage,
   scheduler fields, and extracted scope.
 - If no lawful dependency-ready round can be selected without crossing the
-  semantic-update boundary, stop with a specific blocker instead of inventing
-  scope.
-- Always write machine-readable `round-plan-record.json` following
+  semantic-update boundary, do not write `selection-record.json`, `plan.md`, or
+  `round-plan-record.json`. Write `roadmap-update-request.md` instead, naming
+  the current docs, ADRs, context, code, or tests that show the active roadmap
+  needs a split or resequencing before implementation.
+- For selected implementable rounds, always write machine-readable
+  `round-plan-record.json` following
   `orchestrator/round-plan-record-schema.md`.
 - Revise the same round plan after rejected review only when
   `review-record.json.retry_target` is `plan`.
@@ -75,10 +78,36 @@ Also write `selection-record.json` and `round-plan-record.json` beside
 `plan.md`. They must conform to their schemas; do not rely on `plan.md` prose
 for lineage or worker scheduling.
 
+If no bounded round can be selected, write only
+`roadmap-update-request.md` with this structure:
+
+### Roadmap Update Required
+- Round id:
+- Roadmap id:
+- Roadmap revision:
+- Roadmap dir:
+- Reason:
+
+### Current Evidence
+- Docs/ADRs/context/code inspected:
+- Codebase or test boundaries inspected:
+- Why current milestone/direction is too coarse:
+
+### Requested Split
+<Describe the coordination change the guider should author; do not write the
+roadmap diff here.>
+
+### Non-Goals
+<What the roadmap update must not widen into.>
+
 ## Self-Check
-- Did I write schema-conforming `selection-record.json`?
+- If I selected an implementable round, did I write schema-conforming
+  `selection-record.json`?
+- If I could not select a bounded round, did I write
+  `roadmap-update-request.md` instead of partial selection or plan artifacts?
 - Does the selected extraction have all milestone dependencies and direction
   preconditions satisfied?
 - Is every step concrete and actionable (not "improve X" or "handle Y")?
 - Does the plan stay within the extracted item boundaries?
-- Did I write schema-conforming `round-plan-record.json`?
+- If I selected an implementable round, did I write schema-conforming
+  `round-plan-record.json`?

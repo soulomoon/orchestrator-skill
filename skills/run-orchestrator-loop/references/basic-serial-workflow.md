@@ -32,6 +32,14 @@ Use one canonical branch/worktree under
 dispatched round starts at `plan`; `selection-record.json` is not expected
 until the planner writes it.
 
+During `plan`, the planner may conclude that no bounded dependency-ready round
+can be selected because the active roadmap must first be split or resequenced.
+In that case the planner writes `roadmap-update-request.md` in the canonical
+round worktree instead of `selection-record.json`, `plan.md`, and
+`round-plan-record.json`. The controller exits to `update-roadmap`, removes the
+unselected planning round from `active_rounds[]`, and uses that request only as
+evidence for a delegated semantic roadmap update.
+
 Follow the serial legal stage order in [state-machine.md](state-machine.md):
 `plan` -> `implement` -> `review` -> `finalize-round` -> `done`, dispatching
 the matching repo-local role prompt for delegated stages. Re-read `state.json`
@@ -56,6 +64,9 @@ Exit this basic path and load the named Module when:
   `resume-rules.md`.
 - `review-record.json.roadmap_closeout.mode` is
   `semantic-update-required`: load `orchestrator/roadmap-update-schema.md`.
+- Planner-authored `roadmap-update-request.md` exists for a `plan` stage round:
+  load `state-machine.md`, `resume-rules.md`, and
+  `orchestrator/roadmap-update-schema.md`.
 - A round reaches `finalize-round`: load `worktree-finalization-rules.md` when
   merge admissibility, base freshness, or semantic update serialization needs
   the full predicate set.

@@ -16,6 +16,12 @@ roadmap view drives terminal detection and anchors, when status-only round
 closeout is controller-owned, and when a semantic roadmap update must create a
 new revision.
 
+If a plan-stage planner discovers from current docs, ADRs, context, code, or
+tests that the active milestone is too broad to select a bounded
+dependency-ready round, the planner may write `roadmap-update-request.md`.
+Runtime must treat that as a request to enter delegated `update-roadmap`, not
+as permission to edit the active revision directly.
+
 ## Required State Metadata
 
 `orchestrator/state.json` must name the active bundle with all of:
@@ -245,8 +251,9 @@ such as marking completed work in `roadmap-view.json` and `roadmap.md` or
 adding compact completion pointers, when the reviewer approves that no future
 coordination meaning changed.
 
-Publish a new `rev-00N+1` directory under the same `roadmap_id` when a round or
-roadmap update crosses the semantic roadmap update boundary above.
+Publish a new `rev-00N+1` directory under the same `roadmap_id` when a merged
+round or planner-requested roadmap update crosses the semantic roadmap update
+boundary above.
 
 Move completed detail to
 `orchestrator/roadmaps/<roadmap_id>/roadmap-history.md`, or keep only compact

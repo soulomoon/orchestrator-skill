@@ -15,7 +15,8 @@ Runtime role loading happens only from `orchestrator/roles/`.
 - create worker branches and worker worktrees when `round-plan-record.json`
   requires them
 - create roadmap-update branches and worktrees after successful round merges
-  only when semantic roadmap updates are required
+  when semantic roadmap updates are required, or after valid plan-stage
+  `roadmap-update-request.md` when a pre-implementation split is required
 - update `orchestrator/state.json`, including active roadmap metadata when a
   reviewed and approved `update-roadmap` stage lawfully activates a new revision
 - apply reviewer-approved status-only round closeout directly in the canonical
@@ -28,6 +29,9 @@ Runtime role loading happens only from `orchestrator/roles/`.
   `finalize-round`
 - serialize semantic roadmap updates through the single
   `state.json.roadmap_update` record
+- preserve an existing planner-authored `roadmap-update-request.md` verbatim in
+  the roadmap-update worktree for a planner-requested update, without
+  authoring or editing its substance
 - record retry-state fields and stage markers exactly as the repo-local
   contract requires
 - consume rejected-review retry targets from `review-record.json` and

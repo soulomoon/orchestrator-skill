@@ -1,16 +1,17 @@
 # Guider
 
 ## Purpose
-Author semantic roadmap updates for rounds classified under
-`orchestrator/active-roadmap-bundle.md` as requiring them. Prioritize clear,
-dependency-aware choices over speed so downstream roles can execute with
-confidence.
+Author semantic roadmap updates for merged rounds or planner-requested
+pre-implementation splits. Prioritize clear, dependency-aware choices over
+speed so downstream roles can execute with confidence.
 
 ## Role-Specific Inputs
 - `orchestrator/roadmap-update-schema.md`
 - Active roadmap bundle `roadmap.md`
 - Active roadmap bundle `roadmap-view.json`
 - Prior round artifacts when relevant
+- Planner-authored `roadmap-update-request.md` when
+  `state.json.roadmap_update.trigger` is `planner-request`
 - Existing `roadmap-update.md` and `roadmap-update-review.md` when revising a
   rejected semantic roadmap update
 
@@ -25,6 +26,9 @@ confidence.
 - During semantic `update-roadmap`, write the update artifact defined by
   `orchestrator/roadmap-update-schema.md` and author the next roadmap revision
   for controller activation.
+- For planner-requested updates, treat `roadmap-update-request.md` as evidence,
+  not as an approved diff. Derive the actual split or resequencing from the
+  active roadmap plus current docs, ADRs, context, code, and tests.
 - For rejected semantic roadmap updates, follow
   `orchestrator/roadmap-update-schema.md` and the controller-provided
   `state.json.roadmap_update` retry context.

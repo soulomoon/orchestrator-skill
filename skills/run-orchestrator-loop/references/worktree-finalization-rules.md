@@ -41,12 +41,17 @@ Example:
 ## Roadmap Update Branches And Worktrees
 
 - Use a roadmap-update branch only when the approved `review-record.json`
-  requires a semantic roadmap update.
+  requires a semantic roadmap update, or when a plan-stage
+  `roadmap-update-request.md` requires a pre-implementation split or
+  resequencing before any round can be selected.
 - Follow `orchestrator/roadmap-update-schema.md` for roadmap-update state,
   artifacts, review, rejection, and activation rules.
 - Merge the roadmap-update branch only after explicit reviewer approval.
 - Keep `state.json.roadmap_update` active until the update is approved, merged,
   and cleared under that schema.
+- Planner-requested roadmap updates are not round finalization: cancel the
+  unselected planning round, keep its request as evidence, and author the
+  semantic update in the roadmap-update branch/worktree.
 
 ## Finalize-Round
 

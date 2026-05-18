@@ -30,7 +30,9 @@ the recorded blockage note.
 
 ## Ownership
 
-- `plan`: planner owns normal round selection and planning
+- `plan`: planner owns normal round selection and planning, or may request a
+  pre-implementation semantic roadmap update when the active roadmap must first
+  be split or resequenced
 - `implement`: implementer
 - `review`: reviewer owns approval or rejection
 - `finalize-round`: controller applies reviewer-approved status-only roadmap
@@ -50,6 +52,11 @@ the recorded blockage note.
   when no unfinished milestones remain
 - `dispatch-rounds` -> `update-roadmap` after successful round merge when
   `review-record.json` requires a semantic roadmap update
+- `dispatch-rounds` -> `update-roadmap` after planner-authored
+  `roadmap-update-request.md` shows that no bounded dependency-ready round can
+  be selected without first splitting or resequencing the active roadmap; the
+  controller must remove that unselected planning round from `active_rounds[]`
+  before entering `update-roadmap`
 - `update-roadmap` -> `dispatch-rounds` after approved roadmap update when
   unfinished milestones or live rounds remain
 - `update-roadmap` -> `done` only when the active roadmap bundle has no
@@ -92,6 +99,11 @@ the recorded blockage note.
 
 If approved `update-roadmap` activates a new roadmap revision, the controller
 must update `state.json` roadmap metadata before evaluating those transitions.
+Planner-requested roadmap updates are not round completion and are not
+mergeable round output. They use the planning round id only as
+`source_round_id`; the round branch/worktree is cancelled after the request is
+captured, and the semantic update is authored in its own roadmap-update
+branch/worktree.
 Status-only closeout, semantic roadmap update serialization, and merge
 admissibility happen inside `finalize-round`; the exact predicates and records
 live in [worktree-finalization-rules.md](worktree-finalization-rules.md),
@@ -112,6 +124,7 @@ stateDiagram-v2
     dispatch_rounds --> dispatch_rounds: merged status-only closeout, unfinished work remains
     dispatch_rounds --> done: merged status-only closeout, all work done
     dispatch_rounds --> update_roadmap: round merged, semantic update required
+    dispatch_rounds --> update_roadmap: planner requested split before implementation
     blocked --> dispatch_rounds: recovery resumes
     update_roadmap --> dispatch_rounds: approved update, unfinished work remains
     update_roadmap --> done: approved update, all work done
