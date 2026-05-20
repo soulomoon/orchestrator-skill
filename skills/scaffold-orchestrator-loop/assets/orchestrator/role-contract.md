@@ -8,18 +8,30 @@ The controller loads this file together with the active role prompt. A role
 prompt's role-specific input, boundary, and self-check sections list only
 role-specific additions; the shared rules in this file still apply.
 
+The controller may carry the full orchestrator control-plane picture. Role
+subagents should receive a bounded role work context instead: the controller
+must provide the role assignment, relevant owned artifacts, needed schema
+contracts, and enough project evidence for the role to solve the delegated task
+without spending its context on unrelated orchestration machinery.
+
 ## Shared Inputs
 
 Every role must load the controller-provided task plus any referenced artifacts
-from the recorded branch and worktree. When relevant, every role should expect:
+from the recorded branch and worktree. The role should load only the
+orchestrator artifacts needed for its current stage, artifact ownership, and
+machine-record reads or writes.
 
-- `orchestrator/state.json`
-- `orchestrator/artifact-manifest.md`
-- `orchestrator/project-contract.md`
-- `orchestrator/active-roadmap-bundle.md`
-- the active roadmap bundle resolved from `state.json.roadmap_dir`
-- the relevant schema file for any machine artifact it reads or writes
+When relevant, every role should expect:
+
+- the assigned round, branch, worktree, stage, and role objective
+- the role-owned artifacts it must read or write
+- `orchestrator/project-contract.md` when repo-wide invariants may constrain
+  the task
+- the relevant schema file for any machine artifact the role reads or writes
+- active roadmap bundle files needed for the current role decision
 - current repository status for the assigned branch/worktree
+- project docs, code, tests, and command output needed to solve or verify the
+  delegated project problem
 
 ## Shared Ownership Rules
 

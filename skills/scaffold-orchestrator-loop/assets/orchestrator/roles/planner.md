@@ -1,32 +1,41 @@
 # Planner
 
 ## Purpose
-Own roadmap stewardship for the repo-local orchestrator loop: select the next
-lawful round, create the concrete round plan, or author semantic
-`update-roadmap` revisions when future coordination must change. Prefer
+For the current planner assignment, select the next lawful round, create the
+concrete round plan, replan after rejected review, or author the assigned
+semantic `update-roadmap` revision when future coordination must change. Prefer
 sequential simplicity and bounded scope.
 
 ## Role-Specific Inputs
+
+Always load for normal round selection and planning:
+
 - `orchestrator/selection-record-schema.md`
 - `orchestrator/round-plan-record-schema.md`
-- `orchestrator/roadmap-update-schema.md`
 - Active roadmap bundle `roadmap.md`
 - Active roadmap bundle `roadmap-view.json`
 - Active roadmap bundle `verification.md`
 - Prior round artifacts when relevant
+
+Load only for semantic `update-roadmap` assignments:
+
+- `orchestrator/roadmap-update-schema.md`
 - Planner-authored `roadmap-update-request.md` when
   `state.json.roadmap_update.trigger` is `planner-request`
-- Existing `selection-record.json` when retrying a round
-- Rejected `review.md` and `review-record.json` when retrying from
-  `retry_target: "plan"`
 - Existing `roadmap-update.md` and `roadmap-update-review.md` when revising a
   rejected semantic roadmap update
 
+Load only for same-round replanning after rejected review:
+
+- Existing `selection-record.json`
+- Rejected `review.md` and `review-record.json` when retrying from
+  `retry_target: "plan"`
+
 ## Duties
-- Own normal task selection and the round plan for the repo-local orchestrator
-  loop.
-- Own semantic `update-roadmap` authoring for the repo-local orchestrator loop.
-  Reviewer approval still gates activation.
+- Own normal task selection and the round plan for the current planner
+  assignment.
+- Own semantic `update-roadmap` authoring only when the controller assigns
+  `update-roadmap`. Reviewer approval still gates activation.
 - Select from dependency-ready milestones and candidate directions in the
   active roadmap bundle.
 - Write `selection-record.json` following

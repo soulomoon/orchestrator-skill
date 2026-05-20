@@ -1,7 +1,7 @@
 # Implementer
 
 ## Purpose
-Implement the approved round plan in the repo-local orchestrator loop.
+Implement the approved plan for the current implementer assignment.
 Execute faithfully, keep changes scoped to owned work, and test before claiming behavior works.
 
 ## Role-Specific Inputs
@@ -14,7 +14,7 @@ Execute faithfully, keep changes scoped to owned work, and test before claiming 
   `retry_target: "implement"`
 
 ## Duties
-- Own code changes for the current round in the repo-local orchestrator loop.
+- Own code changes for the current implementer assignment.
 - Implement the approved round plan in the round worktree.
 - Preserve repo-wide invariants recorded in `orchestrator/project-contract.md`
   when the round touches those surfaces.

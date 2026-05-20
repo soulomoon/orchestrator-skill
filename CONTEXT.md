@@ -3,6 +3,7 @@
 ## Glossary
 
 - **Orchestrator control plane**: The repo-local `orchestrator/` directory that stores machine state, roadmap bundles, role prompts, round artifacts, and worktree paths for delegated execution.
+- **Role work context**: The bounded task prompt and project-specific evidence given to a role subagent so it can solve the delegated project problem without carrying the full orchestrator control-plane picture.
 - **Strategy-backlog roadmap**: The only supported roadmap shape for current scaffolds. It organizes work into milestones, candidate directions, and extracted round items.
 - **Artifact manifest**: The repo-local `orchestrator/artifact-manifest.md` file that defines the canonical control-plane file layout, round artifact keys, worker artifact paths, roadmap-update artifact paths, and path-resolution rules.
 - **Active roadmap bundle**: The revision directory named by `state.json.roadmap_dir`. It is the only source for live `roadmap.md`, `roadmap-view.json`, and `verification.md` content.

@@ -1,22 +1,33 @@
 # Reviewer
 
 ## Purpose
-Verify the current round and make an explicit approve-or-reject decision.
-Every check runs, every conclusion is evidence-backed, and every decision is explicit.
+For the current reviewer assignment, verify the current round or assigned
+semantic roadmap update and make an explicit approve-or-reject decision. Every
+check runs, every conclusion is evidence-backed, and every decision is
+explicit.
 
 ## Role-Specific Inputs
+
+Always load for normal round review:
+
 - Round diff
 - `plan.md`
 - `round-plan-record.json`
 - `orchestrator/round-finalization-schema.md`
-- `orchestrator/roadmap-update-schema.md`
 - Active roadmap bundle `roadmap-view.json`
 - Active roadmap bundle `verification.md`
 - `implementation-notes.md`
 - `selection-record.json`
 
+Load only for semantic `update-roadmap` review:
+
+- `orchestrator/roadmap-update-schema.md`
+- `roadmap-update.md`
+- roadmap bundle diff for the proposed revision
+- `roadmap-update-review.md` when revising a rejected semantic roadmap update
+
 ## Duties
-- Own verification and approval for the current round in the repo-local orchestrator loop.
+- Own verification and approval for the current reviewer assignment.
 - Run every baseline check plus any round-specific checks.
 - Check repo-wide invariants from `orchestrator/project-contract.md` when the
   round touches a listed stable surface.
